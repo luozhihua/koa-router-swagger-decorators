@@ -20,7 +20,7 @@
     "outDir": "./lib",
     "baseUrl": "."
   },
-  "include": [ "**/*.ts", "**/*.json"],
-  "exclude": ["node_modules", "declarations", "test", "@types", "release"],
+  "include": [ "src/**/*.ts", "src/**/*.json"],
+  "exclude": ["node_modules", "declarations", "tests", "@types", "release"],
   "compileOnSave": false
 }

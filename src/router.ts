@@ -5,15 +5,16 @@ import swagger from './swagger';
 export interface SwaggerConfig {
 
 }
+
 export interface Config {
   controllersDir: string;
   packageFile: string;
   swaggerConfig?: SwaggerConfig;
 }
 
-export default (config: Config): KoaRouter => {
+export default async (config: Config): Promise<KoaRouter> => {
+  const router: any = swagger(config);
 
-  rootRouter.use(swagger(config).routes());
-
+  rootRouter.use(router.routes());
   return rootRouter;
 }

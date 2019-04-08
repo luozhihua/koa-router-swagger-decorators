@@ -19,3 +19,5 @@ tests
 src
 coverage
 .nyc_output
+.travis.yml
+package-lock.json

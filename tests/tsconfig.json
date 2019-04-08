@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "declarationDir": "../declarations",
+    "baseUrl": "..",
+    "noEmit" : true
+  },
+  "include": [ "**/*.ts", "**/*.json"],
+  "exclude": ["node_modules", "declarations", "@types", "release"],
+  "compileOnSave": false
+}

@@ -1,8 +1,20 @@
-// import { BasePath } from '@decorators';
 import { Context } from 'koa';
-import * as KoaRouter from 'koa-router';
-import * as path from 'path';
-import { request as swaggerRequest } from 'koa-swagger-decorator';
+import { SwaggerRouter, request as swaggerRequest } from 'koa-swagger-decorator';
+import swagger from './swagger';
+
+export interface SwaggerConfig {}
+
+export interface Config {
+  controllersDir: string;
+  packageFile: string;
+  swaggerConfig?: SwaggerConfig;
+}
+
+export interface KoaRouterConfig {
+  controllersDir: string;
+  packageFile: string;
+  swaggerConfig?: SwaggerConfig;
+}
 
 export type AllowedMethods = 'get' | 'post' | 'put' | 'delete' |  'patch' | 'option';
 export const GET: AllowedMethods = 'get';
@@ -11,10 +23,28 @@ export const DELETE: AllowedMethods = 'delete';
 export const PUT: AllowedMethods = 'put';
 export const PATCH: AllowedMethods = 'patch';
 export const OPTION: AllowedMethods = 'option';
-export const rootRouter = new KoaRouter();
-export function router(basePath: string = '/') {
+export const rootRouter = new SwaggerRouter();
+
+/**
+ *
+ */
+export function createRouter(config: Config) {
+  const router: any = swagger(config);
+
+  rootRouter.use(router.routes());
+  return rootRouter;
+}
+
+/**
+ * Koa Router router decorator
+ *
+ * @export
+ * @param {string} [basePath='/']
+ * @returns
+ */
+export function prefix(basePath: string = '/') {
   return function <T extends {new(...args: any[]): {}}>(constructor: T) {
-    const subRouter = new KoaRouter()
+    const subRouter = new SwaggerRouter();
 
     Object.getOwnPropertyNames(constructor).forEach(prop => {
       let handler = constructor[prop]
@@ -24,9 +54,11 @@ export function router(basePath: string = '/') {
 
         path = path.replace(/\{([\w\d]+)\}/g, (matched, key) => {
           return `:${key}`
-        })
+        });
 
         handler.initSwaggerRequest(basePath);
+
+        path = basePath === '/' ? path.replace(/^\//, '') : path;
         subRouter[method](path, handler);
       }
     })
@@ -38,31 +70,35 @@ export function router(basePath: string = '/') {
 }
 
 /**
+ * Koa Router request decorator
  *
- * @param method
- * @param pathStr
+ * @export
+ * @param {AllowedMethods} method
+ * @param {string} pathStr
+ * @returns
  */
 export function requests(method: AllowedMethods, pathStr: string) {
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
     let originValue = descriptor.value
+    let dynamicNameFuncs: any = {
+      [`${name}`]: async function (ctx: Context) {
+        let result = await originValue(ctx);
+        let hasData = result && typeof result.data !== 'undefined';
 
-    async function handler (ctx: Context) {
-      let result = await originValue(ctx);
-      let hasData = result && typeof result.data !== 'undefined';
-
-      ctx.body = hasData ? result : {
-        code: 0,
-        data: result,
-        success: true,
+        ctx.body = hasData ? result : {
+          code: 0,
+          data: result,
+          success: true,
+        }
       }
-    }
+    };
 
-    descriptor.value = handler;
+    descriptor.value = dynamicNameFuncs[name];
     descriptor.value.method = method;
     descriptor.value.path = pathStr;
     descriptor.value.isRouterHandler = true;
     descriptor.value.initSwaggerRequest = (baseUrl = '') => {
-      let fullpath = path.join(baseUrl, pathStr);
+      let fullpath = pathStr; // path.join(baseUrl, pathStr);
       let swaReqDecorator = swaggerRequest(method, fullpath);
 
       swaReqDecorator(target, name, descriptor);

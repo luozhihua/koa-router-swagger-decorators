@@ -29,8 +29,8 @@ script:
 
 deploy:
   provider: npm
-  email: "mail@luozhihua.com"
-  api_key: "b3a1bde8-3211-4dd7-82d2-0d3d25555fd5"
+  email: "$PUBLISH_ACCOUNT"
+  api_key: "$PUBLISH_API_KEY"
   on:
     tags: true
 
