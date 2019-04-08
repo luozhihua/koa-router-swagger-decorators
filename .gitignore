@@ -20,6 +20,5 @@ nohup.out
 *-pm2.log
 build/
 typings/
-declarations/
 coverage/
 .nyc_output

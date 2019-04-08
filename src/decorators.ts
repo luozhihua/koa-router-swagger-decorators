@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Context } from 'koa';
 import { SwaggerRouter, request as swaggerRequest } from 'koa-swagger-decorator';
 import swagger from './swagger';
@@ -52,6 +53,7 @@ export function prefix(basePath: string = '/') {
       if (handler.isRouterHandler) {
         let {method = 'get', path} = handler;
 
+
         path = path.replace(/\{([\w\d]+)\}/g, (matched, key) => {
           return `:${key}`
         });
@@ -98,7 +100,7 @@ export function requests(method: AllowedMethods, pathStr: string) {
     descriptor.value.path = pathStr;
     descriptor.value.isRouterHandler = true;
     descriptor.value.initSwaggerRequest = (baseUrl = '') => {
-      let fullpath = pathStr; // path.join(baseUrl, pathStr);
+      let fullpath = path.join(baseUrl, pathStr);
       let swaReqDecorator = swaggerRequest(method, fullpath);
 
       swaReqDecorator(target, name, descriptor);

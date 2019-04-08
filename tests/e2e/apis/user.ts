@@ -18,4 +18,12 @@ export default class User {
   static async profile(ctx) {
     return 'profile!'
   }
+
+  @Tag
+  @router.request(router.GET, '/details/{id}')
+  @router.path({id: {type: 'string'}})
+  @router.summary('check service health.')
+  static async details(ctx) {
+    return `details of ${ ctx.params.id }!`
+  }
 }

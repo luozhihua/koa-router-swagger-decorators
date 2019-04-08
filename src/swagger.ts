@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as merge from 'merge';
 import { SwaggerRouter } from 'koa-swagger-decorator';
-import {Config} from './router';
+import {Config} from './decorators';
 
 type RouterWithConfig = SwaggerRouter & {config?: Config};
 /**
