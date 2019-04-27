@@ -85,12 +85,14 @@ export function requests(method: AllowedMethods, pathStr: string) {
     let dynamicNameFuncs: any = {
       [`${name}`]: async function (ctx: Context) {
         let result = await originValue(ctx);
-        let hasData = result && typeof result.data !== 'undefined';
 
-        ctx.body = hasData ? result : {
-          code: 0,
-          data: result,
-          success: true,
+        if (typeof result !== 'undefined') {
+          let hasData = result && typeof result.data !== 'undefined';
+          ctx.body = hasData ? result : {
+            code: 0,
+            data: result,
+            success: true,
+          }
         }
 
         // 避免使用此装饰器后的方法无法获取返回值。
