@@ -92,6 +92,9 @@ export function requests(method: AllowedMethods, pathStr: string) {
           data: result,
           success: true,
         }
+
+        // 避免使用此装饰器后的方法无法获取返回值。
+        return result;
       }
     };
 
