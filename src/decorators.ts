@@ -53,7 +53,7 @@ export function prefix(basePath: string = '/') {
       if (handler.isRouterHandler) {
         let {method = 'get', path} = handler;
 
-        path = path.replace(/{(.*?)}/g, (m, k) => k.startsWith('(') ? k : `:${k}`);
+        path = path.replace(/\{(.*?)\}/g, (m, k) => k.startsWith('(') ? k : `:${k}`);
 
         handler.initSwaggerRequest(basePath);
 
