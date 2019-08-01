@@ -70,10 +70,10 @@ export class HttpStatusError extends Error {
   public status: number;
   public errorCode: number;
 
-  constructor(status: number, message: string, errorCode: number) {
+  constructor(status: number, message: string, errorCode?: number) {
     super(message);
     this.status = status;
-    this.errorCode = errorCode;
+    this.errorCode = errorCode || 0;
   }
 }
 

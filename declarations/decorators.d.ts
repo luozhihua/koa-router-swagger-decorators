@@ -36,7 +36,7 @@ export declare function createRouter(config: Config): SwaggerRouter;
 export declare class HttpStatusError extends Error {
     status: number;
     errorCode: number;
-    constructor(status: number, message: string, errorCode: number);
+    constructor(status: number, message: string, errorCode?: number);
 }
 export declare function prefix(basePath?: string): <T extends new (...args: any[]) => {}>(constructor: T) => T;
 export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
