@@ -36,6 +36,8 @@ export default function(config: Config): RouterWithConfig {
     description: pkg.description || '',
     version: pkg.version || '',
     prefix: '/',
+    recursive: true,
+    validatable: true,
     // swaggerHtmlEndpoint: '/swagger',
     // swaggerJsonEndpoint: '/swagger-json',
 
@@ -72,9 +74,9 @@ export default function(config: Config): RouterWithConfig {
   // mapDir will scan the input dir, and automatically call router.map to all Router Class
   swaggerRouter.mapDir(config.controllersDir, {
     // default: true, // . To recursively scan the dir to make router. If false, will not scan subroutes dir
-    recursive: true,
+    recursive: config.recursive,
     // default: true, // if true, you can call ctx.validatedBody[Query | Params] to get validated data.
-    doValidation: true,
+    doValidation: config.validatable,
   });
 
   swaggerRouter.config = swaggerConfig;

@@ -9,6 +9,19 @@ export interface Config {
   controllersDir: string;
   packageFile: string;
   swaggerConfig?: SwaggerConfig;
+
+
+  /**
+   * 是否自动扫描 controllerDir 所指定目录的子目录; default: true;
+   */
+  recursive?: boolean;
+
+  /**
+   * 是否自动验证请求的 body/query/params;
+   * 如果验证不通过则会返回 400 Bad request;
+   * default: true
+   */
+  validatable?: boolean;
   beforeController?: (ctx: Context) => Promise<any>;
   afterController?: (ctx: Context, result: any) => any;
 }
