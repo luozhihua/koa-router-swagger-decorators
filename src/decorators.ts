@@ -9,6 +9,16 @@ export interface Config {
   controllersDir: string;
   packageFile: string;
   swaggerConfig?: SwaggerConfig;
+  beforeController?: (ctx: Context) => Promise<any>;
+  afterController?: (ctx: Context, result: any) => any;
+}
+
+export interface ResponseData {
+  status: number;
+  message: string;
+  success: boolean;
+  data: any;
+  errorCode?: number;
 }
 
 export interface KoaRouterConfig {
@@ -25,11 +35,15 @@ export const PUT: AllowedMethods = 'put';
 export const PATCH: AllowedMethods = 'patch';
 export const OPTION: AllowedMethods = 'option';
 export const rootRouter = new SwaggerRouter();
+export const RouterEvents: Pick<Config, 'beforeController' | 'afterController'> = {};
 
 /**
- *
+ * Create a root Router for Koa app;
  */
 export function createRouter(config: Config) {
+  RouterEvents.beforeController = config.beforeController;
+  RouterEvents.afterController = config.afterController;
+
   const router: any = swagger(config);
 
   rootRouter.use(router.routes());
@@ -78,22 +92,61 @@ export function prefix(basePath: string = '/') {
  */
 export function requests(method: AllowedMethods, pathStr: string) {
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
-    let originValue = descriptor.value
+    let originFunction = descriptor.value
     let dynamicNameFuncs: any = {
       [`${name}`]: async function (ctx: Context) {
-        let result = await originValue(ctx);
 
-        if (typeof result !== 'undefined') {
-          let hasData = result && typeof result.data !== 'undefined';
-          ctx.body = hasData ? result : {
-            code: 0,
-            data: result,
-            success: true,
+        let result: ResponseData;
+        try {
+          // 进入此方法的时候，表明请求的 URL 已存在,
+          // 在对应的 request controller 中，或者 beforeController/afterController中 可以改变这个状态；
+          ctx.status = 200;
+
+          // Before hooks
+          if (typeof RouterEvents.beforeController === 'function') {
+            await RouterEvents.beforeController(ctx);
+          }
+
+          // Route controller
+          result = await originFunction(ctx);
+
+          // After hooks
+          if (typeof RouterEvents.afterController === 'function') {
+            let afterResult = await RouterEvents.afterController(ctx, result);
+
+            result = typeof afterResult !== 'undefined' ? afterResult : result;
+          }
+
+          if (typeof result !== 'undefined') {
+            let hasData = result && typeof result.data !== 'undefined';
+            ctx.body = hasData ? result : {
+              data: result,
+              success: ctx.status >= 400 ? false : true,
+              status: ctx.status,
+              message: '',
+            }
+          }
+
+          // 避免使用此装饰器后的方法无法获取返回值。
+          return result;
+        } catch (err) {
+          let message = err.message || '';
+          let status = err.status || 500;
+          let errorCode = err.code || ctx.state.errorCode || 0;
+
+          if (process.env.NODE_ENV !== 'production') {
+            message = err && err.message ? err.message : err;
+          }
+
+          ctx.status = status;
+          ctx.body = {
+            errorCode,
+            status: status,
+            message,
+            data: null,
+            success: false,
           }
         }
-
-        // 避免使用此装饰器后的方法无法获取返回值。
-        return result;
       }
     };
 

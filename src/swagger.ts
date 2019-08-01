@@ -74,7 +74,7 @@ export default function(config: Config): RouterWithConfig {
     // default: true, // . To recursively scan the dir to make router. If false, will not scan subroutes dir
     recursive: true,
     // default: true, // if true, you can call ctx.validatedBody[Query | Params] to get validated data.
-    doValidation: false,
+    doValidation: true,
   });
 
   swaggerRouter.config = swaggerConfig;
