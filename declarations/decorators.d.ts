@@ -33,5 +33,10 @@ export declare const OPTION: AllowedMethods;
 export declare const rootRouter: SwaggerRouter;
 export declare const RouterEvents: Pick<Config, 'beforeController' | 'afterController'>;
 export declare function createRouter(config: Config): SwaggerRouter;
+export declare class HttpStatusError extends Error {
+    status: number;
+    errorCode: number;
+    constructor(status: number, message: string, errorCode: number);
+}
 export declare function prefix(basePath?: string): <T extends new (...args: any[]) => {}>(constructor: T) => T;
 export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;

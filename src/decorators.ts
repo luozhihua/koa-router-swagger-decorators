@@ -64,6 +64,20 @@ export function createRouter(config: Config) {
 }
 
 /**
+ * 指定 Http 状态码的异常类
+ */
+export class HttpStatusError extends Error {
+  public status: number;
+  public errorCode: number;
+
+  constructor(status: number, message: string, errorCode: number) {
+    super(message);
+    this.status = status;
+    this.errorCode = errorCode;
+  }
+}
+
+/**
  * Koa Router router decorator
  *
  * @export
