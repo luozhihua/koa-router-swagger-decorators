@@ -6,6 +6,8 @@ export interface Config {
     controllersDir: string;
     packageFile: string;
     swaggerConfig?: SwaggerConfig;
+    recursive?: boolean;
+    validatable?: boolean;
     beforeController?: (ctx: Context) => Promise<any>;
     afterController?: (ctx: Context, result: any) => any;
 }
