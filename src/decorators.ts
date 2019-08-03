@@ -77,6 +77,21 @@ export class HttpStatusError extends Error {
   }
 }
 
+export class HttpResponse {
+  public data: any;
+  public status: number;
+  public message: string;
+  public success: boolean;
+  public errorCode?: number;
+
+  constructor(data: any, message: string = '', status: number = 200, success: boolean = true, errorCode: number = 0) {
+    this.data = data;
+    this.status = status;
+    this.message = message;
+    this.success = success;
+  }
+}
+
 /**
  * Koa Router router decorator
  *
@@ -146,6 +161,7 @@ export function requests(method: AllowedMethods, pathStr: string) {
 
           if (typeof result !== 'undefined') {
             let hasData = result && typeof result.data !== 'undefined';
+            ctx.status = result.status || ctx.status;
             ctx.body = hasData ? result : {
               data: result,
               success: ctx.status >= 400 ? false : true,
