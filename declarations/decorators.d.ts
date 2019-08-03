@@ -40,11 +40,11 @@ export declare class HttpStatusError extends Error {
 }
 export declare class HttpResponse {
     data: any;
-    status: number;
-    message: string;
-    success: boolean;
+    status?: number;
+    message?: string;
+    success?: boolean;
     errorCode?: number;
-    constructor(data: any, message?: string, status?: number, success?: boolean, errorCode?: number);
+    constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success'>);
 }
 export declare function prefix(basePath?: string): <T extends new (...args: any[]) => {}>(constructor: T) => T;
 export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;

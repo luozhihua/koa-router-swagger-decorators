@@ -79,12 +79,14 @@ export class HttpStatusError extends Error {
 
 export class HttpResponse {
   public data: any;
-  public status: number;
-  public message: string;
-  public success: boolean;
-  public errorCode?: number;
+  public status?: number = 200;
+  public message?: string = '';
+  public success?: boolean = true;
+  public errorCode?: number = 0;
 
-  constructor(data: any, message: string = '', status: number = 200, success: boolean = true, errorCode: number = 0) {
+  constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success'>) {
+    let { data, message = '', status = 200, success = true, errorCode = 0} = options;
+
     this.data = data;
     this.status = status;
     this.message = message;

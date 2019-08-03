@@ -18,20 +18,25 @@ export default class RootPath {
   @router.summary('check service health.')
   static async list2(ctx) {
     // return 'list2!'
-    return new HttpResponse({list: [1, 2, 3, 4], page: 1, pageSize: 4})
+    return new HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4} })
   }
 
   @Tag
   @router.request(router.GET, '/list3')
   @router.summary('check service health.')
   static async list3(ctx) {
-    return new HttpResponse({list: [1, 2, 3, 4], page: 1, pageSize: 4}, '3333333333')
+    return new HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '3333333333'})
   }
 
   @Tag
   @router.request(router.GET, '/list4')
   @router.summary('check service health.')
   static async list4(ctx) {
-    return new HttpResponse({list: [1, 2, 3, 4], page: 1, pageSize: 4}, '4444444444', 301, false)
+    return new HttpResponse({
+      data: {list: [1, 2, 3, 4], page: 1, pageSize: 4},
+      message: '4444444444',
+      status: 301,
+      success: false
+    })
   }
 }
