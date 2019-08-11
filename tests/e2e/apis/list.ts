@@ -6,9 +6,15 @@ const Tag = router.tags(['TEST']);
 
 @router.prefix('/')
 export default class RootPath {
+  @router.request(router.POST, '/list/:id?')
   @Tag
-  @router.request(router.GET, '/list')
-  @router.summary('check service health.')
+  @router.summary('check service healthxxx.')
+  @router.query({ aquery: { type: 'string', default: '2' }})
+  @router.path({ id: { type: 'string', default: '2' }})
+  @router.responses({  })
+  @router.body({ abody: { type: 'string', default: 'abc', }})
+  @router.description('sdasasd')
+  @router.params('asd', { abcxx: { type: 'string' }})
   static async list(ctx) {
     return 'list!'
   }

@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as Koa from 'koa';
+import * as KoaBody from 'koa-body';
 import createRouter from '../../src';
 
 const app = new Koa();
@@ -25,7 +26,7 @@ app.use(async function errorHandler(ctx, next) {
   try {
     await next();
   } catch (err) {
-    console.log('xxxx', err);
+    console.log('xxxx', err.stack || err);
     let status = err.status || 500;
     let message = err.message || '';
     let body = {
@@ -38,9 +39,9 @@ app.use(async function errorHandler(ctx, next) {
 
     ctx.status = status;
     ctx.body = body;
-
   }
 });
+app.use(KoaBody());
 app.use(routes);
 app.use(methods);
 app.listen(6789);

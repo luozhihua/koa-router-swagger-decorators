@@ -126,6 +126,49 @@ export function prefix(basePath: string = '/') {
   }
 }
 
+interface DecoratorWrapperOptions {
+  before? (ctx: Context): Promise<void>;
+  after? (ctx: Context, returnValue: any): Promise<any>;
+  formatter? (returnValue: any): any;
+}
+export function createDecoratorWrapper(descriptor: PropertyDescriptor, { before, after, formatter}: DecoratorWrapperOptions) {
+  const originFunction = descriptor.value
+  const NAME = originFunction.name;
+  const dynamicNameFuncs: any = {
+    [`${ NAME }`]: async function (ctx: Context) {
+      // Before hooks
+      if (typeof before === 'function') {
+        await before(ctx);
+      }
+
+      let result: ResponseData = await originFunction(ctx);
+
+      // After hooks
+      if (typeof after === 'function') {
+        let afterResult = await after(ctx, result);
+
+        result = typeof afterResult !== 'undefined' ? afterResult : result;
+      }
+
+      // 避免使用此装饰器后的方法无法获取返回值。
+      let formattedResult = typeof formatter === 'function' ? formatter(result) : result;
+
+      ctx.status = 200;
+      ctx.body = formattedResult;
+
+      return formattedResult;
+    }
+  };
+
+  Object.getOwnPropertyNames(originFunction).map((prop: string) => {
+    if (!['name', 'length'].includes(prop)) {
+      dynamicNameFuncs[NAME][prop] = originFunction[prop];
+    }
+  });
+
+  return dynamicNameFuncs[NAME];
+}
+
 /**
  * Koa Router request decorator
  *
@@ -136,66 +179,25 @@ export function prefix(basePath: string = '/') {
  */
 export function requests(method: AllowedMethods, pathStr: string) {
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
-    let originFunction = descriptor.value
-    let dynamicNameFuncs: any = {
-      [`${name}`]: async function (ctx: Context) {
 
-        let result: ResponseData;
-        try {
-          // 进入此方法的时候，表明请求的 URL 已存在,
-          // 在对应的 request controller 中，或者 beforeController/afterController中 可以改变这个状态；
-          ctx.status = 200;
+    let decorator = createDecoratorWrapper(descriptor, {
+      before: RouterEvents.beforeController,
+      after: RouterEvents.afterController,
+      formatter(result) {
+        if (typeof result !== 'undefined') {
+          let hasData = result && typeof result.data !== 'undefined';
 
-          // Before hooks
-          if (typeof RouterEvents.beforeController === 'function') {
-            await RouterEvents.beforeController(ctx);
-          }
-
-          // Route controller
-          result = await originFunction(ctx);
-
-          // After hooks
-          if (typeof RouterEvents.afterController === 'function') {
-            let afterResult = await RouterEvents.afterController(ctx, result);
-
-            result = typeof afterResult !== 'undefined' ? afterResult : result;
-          }
-
-          if (typeof result !== 'undefined') {
-            let hasData = result && typeof result.data !== 'undefined';
-            ctx.status = result.status || ctx.status;
-            ctx.body = hasData ? result : {
-              data: result,
-              success: ctx.status >= 400 ? false : true,
-              status: ctx.status,
-              message: '',
-            }
-          }
-
-          // 避免使用此装饰器后的方法无法获取返回值。
-          return result;
-        } catch (err) {
-          let message = err.message || '';
-          let status = err.status || 500;
-          let errorCode = err.code || ctx.state.errorCode || 0;
-
-          if (process.env.NODE_ENV !== 'production') {
-            message = err && err.message ? err.message : err;
-          }
-
-          ctx.status = status;
-          ctx.body = {
-            errorCode,
-            status: status,
-            message,
-            data: null,
-            success: false,
+          return hasData ? result : {
+            data: result,
+            success: true,
+            status: 200,
+            message: '',
           }
         }
       }
-    };
+    });
 
-    descriptor.value = dynamicNameFuncs[name];
+    descriptor.value = decorator;
     descriptor.value.method = method;
     descriptor.value.path = pathStr;
     descriptor.value.isRouterHandler = true;
