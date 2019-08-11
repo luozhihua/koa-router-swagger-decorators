@@ -102,8 +102,9 @@ export class HttpResponse {
  * @returns
  */
 export function prefix(basePath: string = '/') {
-  return function <T extends {new(...args: any[]): {}}>(constructor: T) {
+  return function (constructor: any) {
     const subRouter = new SwaggerRouter();
+    // constructor.prefix = basePath;
 
     Object.getOwnPropertyNames(constructor).forEach(prop => {
       let handler = constructor[prop]
@@ -126,13 +127,33 @@ export function prefix(basePath: string = '/') {
   }
 }
 
+export function wrapperAll(target, options: DecoratorWrapperOptions) {
+  Object.getOwnPropertyNames(target)
+  .filter(p => !['length', 'prototype', 'name'].includes(p))
+  .forEach(prop => {
+    target[prop] = wrapperProperty({value: target[prop]}, options);
+  });
+
+  Object.getOwnPropertyNames(target.prototype)
+  .filter(p => !['constructor'].includes(p))
+  .forEach(prop => {
+    target.prototype[prop] = wrapperProperty({value: target.prototype[prop]}, options);
+  });
+}
+
 interface DecoratorWrapperOptions {
   before? (ctx: Context): Promise<void>;
   after? (ctx: Context, returnValue: any): Promise<any>;
   formatter? (returnValue: any): any;
 }
-export function createDecoratorWrapper(descriptor: PropertyDescriptor, { before, after, formatter}: DecoratorWrapperOptions) {
-  const originFunction = descriptor.value
+export function wrapperProperty(descriptor: PropertyDescriptor, options: DecoratorWrapperOptions = {}): PropertyDescriptor {
+  const { before, after, formatter} = options;
+  const originFunction = descriptor.value;
+
+  if (typeof originFunction !== 'function') {
+    return descriptor.value;
+  }
+
   const NAME = originFunction.name;
   const dynamicNameFuncs: any = {
     [`${ NAME }`]: async function (ctx: Context) {
@@ -180,7 +201,7 @@ export function createDecoratorWrapper(descriptor: PropertyDescriptor, { before,
 export function requests(method: AllowedMethods, pathStr: string) {
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
 
-    let decorator = createDecoratorWrapper(descriptor, {
+    let decorator = wrapperProperty(descriptor, {
       before: RouterEvents.beforeController,
       after: RouterEvents.afterController,
       formatter(result) {

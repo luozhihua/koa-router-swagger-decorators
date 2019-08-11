@@ -26,7 +26,7 @@ app.use(async function errorHandler(ctx, next) {
   try {
     await next();
   } catch (err) {
-    console.log('xxxx', err.stack || err);
+    console.log(err.stack || err);
     let status = err.status || 500;
     let message = err.message || '';
     let body = {

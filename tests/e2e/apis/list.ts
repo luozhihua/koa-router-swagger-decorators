@@ -2,12 +2,11 @@ import { HttpResponse } from './../../../src/decorators';
 // import * as router from 'koa-swagger-decorator';
 import * as router from '../../../src';
 
-const Tag = router.tags(['TEST']);
-
+@router.tagsAll(['List'])
+@router.queryAll({ xyz: { type: 'string', required: true} })
 @router.prefix('/')
 export default class RootPath {
   @router.request(router.POST, '/list/:id?')
-  @Tag
   @router.summary('check service healthxxx.')
   @router.query({ aquery: { type: 'string', default: '2' }})
   @router.path({ id: { type: 'string', default: '2' }})
@@ -19,7 +18,6 @@ export default class RootPath {
     return 'list!'
   }
 
-  @Tag
   @router.request(router.GET, '/list2')
   @router.summary('check service health.')
   static async list2(ctx) {
@@ -27,14 +25,13 @@ export default class RootPath {
     return new HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4} })
   }
 
-  @Tag
   @router.request(router.GET, '/list3')
   @router.summary('check service health.')
   static async list3(ctx) {
     return new HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '3333333333'})
   }
 
-  @Tag
+  @router.tags(['XXXX'])
   @router.request(router.GET, '/list4')
   @router.summary('check service health.')
   static async list4(ctx) {

@@ -46,12 +46,13 @@ export declare class HttpResponse {
     errorCode?: number;
     constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success'>);
 }
-export declare function prefix(basePath?: string): <T extends new (...args: any[]) => {}>(constructor: T) => T;
+export declare function prefix(basePath?: string): (constructor: any) => any;
+export declare function wrapperAll(target: any, options: DecoratorWrapperOptions): void;
 interface DecoratorWrapperOptions {
     before?(ctx: Context): Promise<void>;
     after?(ctx: Context, returnValue: any): Promise<any>;
     formatter?(returnValue: any): any;
 }
-export declare function createDecoratorWrapper(descriptor: PropertyDescriptor, { before, after, formatter }: DecoratorWrapperOptions): any;
+export declare function wrapperProperty(descriptor: PropertyDescriptor, options?: DecoratorWrapperOptions): PropertyDescriptor;
 export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
 export {};
