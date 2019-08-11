@@ -47,4 +47,11 @@ export declare class HttpResponse {
     constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success'>);
 }
 export declare function prefix(basePath?: string): <T extends new (...args: any[]) => {}>(constructor: T) => T;
+interface DecoratorWrapperOptions {
+    before?(ctx: Context): Promise<void>;
+    after?(ctx: Context, returnValue: any): Promise<any>;
+    formatter?(returnValue: any): any;
+}
+export declare function createDecoratorWrapper(descriptor: PropertyDescriptor, { before, after, formatter }: DecoratorWrapperOptions): any;
 export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+export {};
