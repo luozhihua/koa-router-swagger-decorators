@@ -14,8 +14,8 @@ const router =  createRouter({
     console.log('before hooks')
 
   },
-  afterController: async (ctx, result) => {
-
+  afterController: async (ctx) => {
+    console.log('after hooks')
   }
 });
 

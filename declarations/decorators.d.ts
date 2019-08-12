@@ -9,7 +9,7 @@ export interface Config {
     recursive?: boolean;
     validatable?: boolean;
     beforeController?: (ctx: Context) => Promise<any>;
-    afterController?: (ctx: Context, result: any) => any;
+    afterController?: (ctx: Context) => any;
 }
 export interface ResponseData {
     status: number;
@@ -46,13 +46,13 @@ export declare class HttpResponse {
     errorCode?: number;
     constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success'>);
 }
-export declare function prefix(basePath?: string): (constructor: any) => any;
+export declare function prefix(basePath?: string): (target: any) => any;
 export interface DecoratorWrapperOptions {
     before?(ctx: Context): Promise<void>;
-    after?(ctx: Context, returnValue: any): Promise<any>;
+    after?(ctx: Context): Promise<any>;
     formatter?(returnValue: any): any;
     excludes?: string[];
 }
-export declare function wrapperProperty(descriptor: PropertyDescriptor, options?: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'>): PropertyDescriptor;
+export declare function wrapperProperty(target: any, descriptor: PropertyDescriptor, options?: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'>): PropertyDescriptor;
 export declare function wrapperAll(target: any, options: DecoratorWrapperOptions): void;
 export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;

@@ -7,16 +7,20 @@ function logAll(options: router.DecoratorWrapperOptions = {}) {
     router.wrapperAll(target, {
       async before(ctx) {
         console.log('BEFORE ALL.');
+
+        if (ctx.path.indexOf('list2') !== -1) {
+          throw new Error('list threw error in before all hook.')
+        }
       },
       ...options,
     });
   }
 }
 
-@router.tagsAll(['List'])
 // @router.queryAll({ xyz: { type: 'string', required: true} })
-@router.prefix('/')
+@router.prefix('/doc')
 @logAll({excludes: ['list3']})
+@router.tagsAll(['List'])
 export default class RootPath {
   @router.request(router.POST, '/list/:id?')
   @router.summary('get list 1.')
