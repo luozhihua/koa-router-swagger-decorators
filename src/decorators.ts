@@ -127,26 +127,13 @@ export function prefix(basePath: string = '/') {
   }
 }
 
-export function wrapperAll(target, options: DecoratorWrapperOptions) {
-  Object.getOwnPropertyNames(target)
-  .filter(p => !['length', 'prototype', 'name'].includes(p))
-  .forEach(prop => {
-    target[prop] = wrapperProperty({value: target[prop]}, options);
-  });
-
-  Object.getOwnPropertyNames(target.prototype)
-  .filter(p => !['constructor'].includes(p))
-  .forEach(prop => {
-    target.prototype[prop] = wrapperProperty({value: target.prototype[prop]}, options);
-  });
-}
-
-interface DecoratorWrapperOptions {
+export interface DecoratorWrapperOptions {
   before? (ctx: Context): Promise<void>;
   after? (ctx: Context, returnValue: any): Promise<any>;
   formatter? (returnValue: any): any;
+  excludes?: string[];
 }
-export function wrapperProperty(descriptor: PropertyDescriptor, options: DecoratorWrapperOptions = {}): PropertyDescriptor {
+export function wrapperProperty(descriptor: PropertyDescriptor, options: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'> = {}): PropertyDescriptor {
   const { before, after, formatter} = options;
   const originFunction = descriptor.value;
 
@@ -188,6 +175,22 @@ export function wrapperProperty(descriptor: PropertyDescriptor, options: Decorat
   });
 
   return dynamicNameFuncs[NAME];
+}
+
+export function wrapperAll(target, options: DecoratorWrapperOptions) {
+  const { excludes = [] } = options;
+
+  Object.getOwnPropertyNames(target)
+  .filter(p => !['length', 'prototype', 'name', ...excludes].includes(p))
+  .forEach(prop => {
+    target[prop] = wrapperProperty({value: target[prop]}, options);
+  });
+
+  Object.getOwnPropertyNames(target.prototype)
+  .filter(p => !['constructor', ...excludes].includes(p))
+  .forEach(prop => {
+    target.prototype[prop] = wrapperProperty({value: target.prototype[prop]}, options);
+  });
 }
 
 /**

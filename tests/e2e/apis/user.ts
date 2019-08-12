@@ -5,7 +5,7 @@ import * as router from '../../../src/';
 @router.queryAll({ limit: {type: 'number', required: true, default: 231}})
 @router.prefix('/users')
 export default class User {
-  @router.request(router.GET, '/list')
+  @router.request(router.GET, '/users ')
   @router.summary('Get user list.')
   static async users(ctx) {
     ctx.status = 401;
