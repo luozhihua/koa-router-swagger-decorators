@@ -135,7 +135,7 @@ export interface DecoratorWrapperOptions {
   formatter? (returnValue: any): any;
   excludes?: string[];
 }
-export function wrapperProperty(target: any, descriptor: PropertyDescriptor, options: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'> = {}): PropertyDescriptor {
+export function wrapperProperty(target: any, descriptor: PropertyDescriptor, options: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'> = {}) {
   const { before, after, formatter} = options;
   const originFunction = descriptor.value;
   const NAME = originFunction.name;
@@ -158,10 +158,7 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
     emitter.on(`${ EVENT_KEY }-after`, after);
   }
 
-  if (originFunction.wrappedDecorator) {
-    console.log(EVENT_KEY);
-    return originFunction;
-  } else {
+  if (!originFunction.wrappedDecorator) {
     const dynamicNameFuncs: any = {
       [`${ NAME }`]: async function (ctx: Context) {
         await emitter.emit(`${ EVENT_KEY }-before`, ctx); // Before hooks
@@ -185,7 +182,13 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
       }
     });
 
-    return dynamicNameFuncs[NAME];
+    let newFunc = dynamicNameFuncs[NAME];
+
+    if (newFunc.name !== NAME) {
+      throw new Error('[koa-router-swagger-decorators] - Decorator wrapper does not supported dynamic function name.');
+    }
+
+    descriptor.value = newFunc;
   }
 }
 
@@ -195,7 +198,7 @@ export function wrapperAll(target, options: DecoratorWrapperOptions) {
   Object.getOwnPropertyNames(target)
   .filter(p => !['length', 'prototype', 'name', ...excludes].includes(p))
   .forEach(prop => {
-    target[prop] = wrapperProperty(target, {
+    wrapperProperty(target, {
       value: target[prop],
       writable: true,
       enumerable: true,
@@ -205,7 +208,7 @@ export function wrapperAll(target, options: DecoratorWrapperOptions) {
   Object.getOwnPropertyNames(target.prototype)
   .filter(p => !['constructor', ...excludes].includes(p))
   .forEach(prop => {
-    target.prototype[prop] = wrapperProperty(target, {value: target.prototype[prop]}, options);
+    wrapperProperty(target, {value: target.prototype[prop]}, options);
   });
 }
 
@@ -219,7 +222,7 @@ export function wrapperAll(target, options: DecoratorWrapperOptions) {
  */
 export function requests(method: AllowedMethods, pathStr: string) {
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
-    let decorator = wrapperProperty(target, descriptor, {
+    wrapperProperty(target, descriptor, {
       before: RouterEvents.beforeController,
       after: RouterEvents.afterController,
       formatter(result) {
@@ -236,7 +239,7 @@ export function requests(method: AllowedMethods, pathStr: string) {
       }
     });
 
-    descriptor.value = decorator;
+    // descriptor.value = decorator;
     descriptor.value.method = method;
     descriptor.value.path = pathStr;
     descriptor.value.isRouterHandler = true;

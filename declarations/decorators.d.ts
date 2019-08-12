@@ -53,6 +53,6 @@ export interface DecoratorWrapperOptions {
     formatter?(returnValue: any): any;
     excludes?: string[];
 }
-export declare function wrapperProperty(target: any, descriptor: PropertyDescriptor, options?: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'>): PropertyDescriptor;
+export declare function wrapperProperty(target: any, descriptor: PropertyDescriptor, options?: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'>): any;
 export declare function wrapperAll(target: any, options: DecoratorWrapperOptions): void;
 export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
