@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as Koa from 'koa';
 import * as KoaBody from 'koa-body';
-import createRouter from '../../src';
+import createRouter, {HttpResponse} from '../../src';
 
 const app = new Koa();
 const router =  createRouter({
@@ -16,6 +16,27 @@ const router =  createRouter({
   },
   afterController: async (ctx) => {
     console.log('after hooks')
+  },
+  formatter: (ctx, result) => {
+    if (result && typeof result.data === 'undefined' && typeof result.success === 'undefined') {
+      return new HttpResponse({
+        data: result,
+        message: ctx.message || ctx.state.message || '',
+        status: 200,
+        errorCode: ctx.state.errorCode || 0,
+        success: true,
+      });
+    } else if (!result) {
+      return new HttpResponse({
+        data: ctx.body || null,
+        message: ctx.message || ctx.state.message || '',
+        status: 200,
+        errorCode: ctx.state.errorCode || 0,
+        success: true,
+      });
+    } else {
+      return result;
+    }
   }
 });
 

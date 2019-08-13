@@ -1,4 +1,3 @@
-import { HttpResponse } from './../../../src/decorators';
 // import * as router from 'koa-swagger-decorator';
 import * as router from '../../../src';
 
@@ -38,20 +37,20 @@ export default class RootPath {
   @router.summary('get list 2.')
   static async list2(ctx) {
     // return 'list2!'
-    return new HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4} })
+    return new router.HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4} })
   }
 
   @router.request(router.GET, '/list3')
   @router.summary('get list 3.')
   static async list3(ctx) {
-    return new HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '3333333333'})
+    return new router.HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '3333333333'})
   }
 
   @router.tags(['XXXX'])
   @router.summary('get list 4.')
   @router.request(router.GET, '/list4')
   static async list4(ctx) {
-    return new HttpResponse({
+    return new router.HttpResponse({
       data: {list: [1, 2, 3, 4, 6], page: 1, pageSize: 4},
       message: '4444444444',
       success: false

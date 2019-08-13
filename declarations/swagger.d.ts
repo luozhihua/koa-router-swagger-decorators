@@ -1,5 +1,5 @@
 import { SwaggerRouter } from 'koa-swagger-decorator';
-import { Config } from './decorators';
+import { Config } from './utils';
 declare type RouterWithConfig = SwaggerRouter & {
     config?: Config;
 };
