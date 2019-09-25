@@ -34,5 +34,6 @@ deploy:
   email: "$PUBLISH_ACCOUNT"
   api_key: "$PUBLISH_API_KEY"
   on:
+    node_js: stable
     tags: true
 
