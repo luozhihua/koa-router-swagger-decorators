@@ -67,14 +67,16 @@ export class HttpResponse {
   public message?: string = '';
   public success?: boolean = true;
   public errorCode?: number = 0;
+  public noWrapper?: boolean = false;
 
-  constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success'>) {
-    let { data, message = '', status = 200, success = true, errorCode = 0} = options;
+  constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success' | 'noWrapper'>) {
+    let { data, message = '', status = 200, success = true, errorCode = 0, noWrapper = false} = options;
 
     this.data = data;
     this.status = status;
     this.message = message;
     this.success = success;
+    this.noWrapper = noWrapper;
   }
 }
 

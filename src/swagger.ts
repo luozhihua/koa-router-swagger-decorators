@@ -5,25 +5,19 @@ import { SwaggerRouter } from 'koa-swagger-decorator';
 import { Config } from './utils';
 
 type RouterWithConfig = SwaggerRouter & {config?: Config};
+
 /**
  * 读取 package.json
  */
 function readPkg(pkgFile: string) {
-  let pkg;
-
-  if (fs.existsSync(pkgFile)) {
-    pkg = JSON.parse(fs.readFileSync(pkgFile, 'utf-8'));
-  } else {
-    pkg = {}
-  }
-
-  return pkg;
+  return fs.existsSync(pkgFile) 
+    ? JSON.parse(fs.readFileSync(pkgFile, 'utf-8')) 
+    : {};
 }
 
 export default function(config: Config): RouterWithConfig {
   let pkg;
   let swaggerConfig;
-
 
   if (config.packageFile) {
     pkg = readPkg(config.packageFile);
