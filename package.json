@@ -1,6 +1,6 @@
 {
   "name": "koa-router-swagger-decorators",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "A Typescript decorative library for Koa-router integrating swagger.",
   "main": "lib/index.js",
   "module": "src/index.ts",
@@ -27,7 +27,7 @@
     "pre-push": "npm run test"
   },
   "dependencies": {
-    "koa-swagger-decorator": "^1.5.16",
+    "koa-swagger-decorator": "^1.6.0",
     "merge": "^1.2.1",
     "promise-events": "^0.1.6"
   },

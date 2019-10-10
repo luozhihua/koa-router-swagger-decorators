@@ -41,6 +41,7 @@ export declare class HttpResponse {
     message?: string;
     success?: boolean;
     errorCode?: number;
-    constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success'>);
+    noWrapper?: boolean;
+    constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success' | 'noWrapper'>);
 }
 export declare function defaultFormatter(ctx: Context, result: any): any;
