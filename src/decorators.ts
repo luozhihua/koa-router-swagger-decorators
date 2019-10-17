@@ -145,12 +145,12 @@ export function wrapperAll(target, options: DecoratorWrapperOptions) {
  * @param {string} pathStr
  * @returns
  */
-export function requests(method: AllowedMethods, pathStr: string) {
+export function requests(method: AllowedMethods, pathStr: string, formatter?: any) {
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
     wrapperProperty(target, descriptor, {
       before: RouterEvents.beforeController,
       after: RouterEvents.afterController,
-      formatter: RouterEvents.formatter,
+      formatter: formatter || RouterEvents.formatter,
     });
 
     descriptor.value.method = method;

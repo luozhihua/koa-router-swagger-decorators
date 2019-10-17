@@ -13,4 +13,4 @@ export interface DecoratorWrapperOptions {
 }
 export declare function wrapperProperty(target: any, descriptor: PropertyDescriptor, options?: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'>): any;
 export declare function wrapperAll(target: any, options: DecoratorWrapperOptions): void;
-export declare function requests(method: AllowedMethods, pathStr: string): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
+export declare function requests(method: AllowedMethods, pathStr: string, formatter?: any): (target: any, name: string, descriptor: PropertyDescriptor) => PropertyDescriptor;
