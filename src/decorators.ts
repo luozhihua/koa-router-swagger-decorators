@@ -4,7 +4,7 @@ import { Context } from 'koa';
 import { SwaggerRouter, request as swaggerRequest, prefix as swaggerPrefix } from 'koa-swagger-decorator';
 import swagger from './swagger';
 
-import { Config, ResponseData, AllowedMethods, defaultFormatter, } from './utils'
+import { Config, ResponseData, AllowedMethods, defaultFormatter, ResponseFormatter, } from './utils'
 
 export const rootRouter = new SwaggerRouter();
 export const RouterEvents: Pick<Config, 'beforeController' | 'afterController' | 'formatter'> = {};
@@ -57,7 +57,7 @@ export function prefix(basePath: string = '/') {
 export interface DecoratorWrapperOptions {
   before? (ctx: Context): Promise<void>;
   after? (ctx: Context): Promise<any>;
-  formatter? (ctx: Context, returnValue: any): any;
+  formatter?: ResponseFormatter;
   excludes?: string[];
 }
 export function wrapperProperty(target: any, descriptor: PropertyDescriptor, options: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'> = {}) {
@@ -152,12 +152,18 @@ export function wrapperAll(target, options: DecoratorWrapperOptions) {
  * @param {string} pathStr
  * @returns
  */
-export function requests(method: AllowedMethods, pathStr: string, formatter?: any) {
+export function requests(method: AllowedMethods, pathStr: string, formatter?: ResponseFormatter | boolean) {
+
+  // 如果 request 被装饰的函数有返回值则优先使用返回值，否则使用原始 ctx.body 的值；
+  if (typeof formatter === 'boolean') {
+    formatter = (ctx, res) => res || ctx.body;
+  }
+
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
     wrapperProperty(target, descriptor, {
       before: RouterEvents.beforeController,
       after: RouterEvents.afterController,
-      formatter: formatter || RouterEvents.formatter,
+      formatter: formatter as ResponseFormatter || RouterEvents.formatter,
     });
 
     descriptor.value.method = method;

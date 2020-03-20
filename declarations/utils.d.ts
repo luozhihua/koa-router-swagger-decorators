@@ -8,6 +8,7 @@ export declare const PATCH: AllowedMethods;
 export declare const OPTION: AllowedMethods;
 export interface SwaggerConfig {
 }
+export declare type ResponseFormatter = (ctx: Context, result: any) => any;
 export interface Config {
     controllersDir: string;
     packageFile: string;
@@ -16,7 +17,7 @@ export interface Config {
     validatable?: boolean;
     beforeController?: (ctx: Context) => Promise<any>;
     afterController?: (ctx: Context) => any;
-    formatter?: (ctx: Context, result: any) => any;
+    formatter?: ResponseFormatter;
 }
 export interface ResponseData {
     status: number;
@@ -44,4 +45,4 @@ export declare class HttpResponse {
     noWrapper?: boolean;
     constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success' | 'noWrapper'>);
 }
-export declare function defaultFormatter(ctx: Context, result: any): any;
+export declare const defaultFormatter: ResponseFormatter;

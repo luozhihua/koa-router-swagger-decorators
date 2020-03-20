@@ -11,6 +11,7 @@ export const OPTION: AllowedMethods = 'option';
 
 export interface SwaggerConfig {}
 
+export type ResponseFormatter = (ctx: Context, result: any) => any
 export interface Config {
   controllersDir: string;
   packageFile: string;
@@ -30,7 +31,7 @@ export interface Config {
   validatable?: boolean;
   beforeController?: (ctx: Context) => Promise<any>;
   afterController?: (ctx: Context) => any;
-  formatter?: (ctx: Context, result: any) => any;
+  formatter?: ResponseFormatter;
 }
 
 export interface ResponseData {
@@ -80,7 +81,7 @@ export class HttpResponse {
   }
 }
 
-export function defaultFormatter(ctx: Context, result: any): any {
+export const defaultFormatter: ResponseFormatter = (ctx: Context, result: any): any => {
   if (result && typeof result.data === 'undefined' && typeof result.success === 'undefined') {
     return new HttpResponse({
       data: result,
