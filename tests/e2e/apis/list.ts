@@ -46,13 +46,20 @@ export default class RootPath {
     return new router.HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '3333333333'})
   }
 
-  @router.tags(['XXXX'])
-  @router.summary('get list 4.')
   @router.request(router.GET, '/list4')
+  @router.summary('get list 4.')
   static async list4(ctx) {
+    // ctx.status = 403;
+    return new router.HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '44444', })
+  }
+
+  @router.tags(['XXXX'])
+  @router.summary('get list 5.')
+  @router.request(router.GET, '/list5')
+  static async list5(ctx) {
     return new router.HttpResponse({
       data: {list: [1, 2, 3, 4, 6], page: 1, pageSize: 4},
-      message: '4444444444',
+      message: '555555',
       success: false
     })
   }

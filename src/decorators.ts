@@ -84,20 +84,27 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
   }
 
   if (!originFunction.wrappedDecorator) {
+
+    // 使用 dynamicNameFuncs[`${NAME}`]的目的是动态生成具名函数
+    // 匿名函数会导致同类的子装饰器失效
     const dynamicNameFuncs: any = {
       [`${ NAME }`]: async function (ctx: Context) {
-        await emitter.emit(`${ EVENT_KEY }-before`, ctx); // Before hooks
-        let result: ResponseData = await originFunction(ctx);
-        await emitter.emit(`${ EVENT_KEY }-after`, ctx); // After hooks
 
         ctx.status = 200;
         ctx.message = 'ok';
 
-        // 避免使用此装饰器后的方法无法获取返回值。
-        result = typeof formatter === 'function' ? formatter(ctx, result) : defaultFormatter(ctx, result);
-        ctx.body = result;
+        await emitter.emit(`${ EVENT_KEY }-before`, ctx); // Before hooks
+        let result: ResponseData = await originFunction(ctx);
+        await emitter.emit(`${ EVENT_KEY }-after`, ctx); // After hooks
 
-        return result;
+        result = typeof formatter === 'function' ? formatter(ctx, result) : defaultFormatter(ctx, result);
+
+        // 如果 Formatter和控制器都没有返回任何数值，则使用 ctx.body的值
+        // 优先使用返回值，其次是 ctx.body;
+        ctx.body = typeof result !== 'undefined' ? result : ctx.body;
+
+        // 避免使用此装饰器后的方法无法获取返回值。
+        return ctx.body;
       }
     };
 
