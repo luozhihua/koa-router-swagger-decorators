@@ -1,4 +1,4 @@
-# koa-router-swagger-decorators
+# koa-router-swagger-decorators [![Build Status](https://travis-ci.org/luozhihua/koa-router-swagger-decorators.svg?branch=master)](https://travis-ci.org/luozhihua/koa-router-swagger-decorators)
 
 > Based on [koa-swagger-decorator](https://github.com/Cody2333/koa-swagger-decorator)
 
