@@ -1,6 +1,6 @@
 {
   "name": "koa-router-swagger-decorators",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "description": "A Typescript decorative library for Koa-router integrating swagger.",
   "main": "lib/index.js",
   "module": "src/index.ts",
@@ -8,8 +8,11 @@
     "start": "ts-node ./tests/e2e",
     "prepare": "git init && git config core.hooksPath .githooks",
     "test": "cross-env-shell NODE_ENV=unit-test PORT=10000 nyc mocha -r ts-node/register tests/spec/**/*.spec.ts --timeout 200000 --exit",
-    "build": "npm test && tsc",
-    "prepublish": "npm run build"
+    "build": "tsc",
+    "prepublish": "npm run build",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A ./lib",
+    "postversion": "git push && git push --tags"
   },
   "keywords": [
     "koa-router",
