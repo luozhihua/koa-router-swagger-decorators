@@ -43,13 +43,15 @@ export default class RootPath {
   @router.request(router.GET, '/list3')
   @router.summary('get list 3.')
   static async list3(ctx) {
-    return new router.HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '3333333333'})
+    ctx.status = 301;
+    ctx.body = '301, location: sxxx'
+    // return new router.HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '301, location: sxxx'})
   }
 
   @router.request(router.GET, '/list4')
   @router.summary('get list 4.')
   static async list4(ctx) {
-    // ctx.status = 403;
+    ctx.status = 401;
     return new router.HttpResponse({ data: {list: [1, 2, 3, 4], page: 1, pageSize: 4}, message: '44444', })
   }
 
@@ -57,6 +59,7 @@ export default class RootPath {
   @router.summary('get list 5.')
   @router.request(router.GET, '/list5')
   static async list5(ctx) {
+    ctx.status = 500;
     return new router.HttpResponse({
       data: {list: [1, 2, 3, 4, 6], page: 1, pageSize: 4},
       message: '555555',
