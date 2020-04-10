@@ -55,8 +55,8 @@ export function prefix(basePath: string = '/') {
 }
 
 export interface DecoratorWrapperOptions {
-  before? (ctx: Context): Promise<void>;
-  after? (ctx: Context): Promise<any>;
+  before? (ctx: Context, target: any, name: string): Promise<void>;
+  after? (ctx: Context, target: any, name: string): Promise<any>;
   formatter?: ResponseFormatter;
   excludes?: string[];
 }
@@ -94,9 +94,9 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
         ctx.message = 'ok';
 
         try {
-          await emitter.emit(`${ EVENT_KEY }-before`, ctx, NAME); // Before hooks
+          await emitter.emit(`${ EVENT_KEY }-before`, ctx, target, NAME); // Before hooks
           let result: ResponseData = await originFunction(ctx);
-          await emitter.emit(`${ EVENT_KEY }-after`, ctx, NAME); // After hooks
+          await emitter.emit(`${ EVENT_KEY }-after`, ctx, target, NAME); // After hooks
           result = typeof formatter === 'function' ? formatter(ctx, result) : defaultFormatter(ctx, result);
 
           // 如果 Formatter和控制器都没有返回任何数值，则使用 ctx.body的值
