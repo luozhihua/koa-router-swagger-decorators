@@ -67,7 +67,7 @@ export class HttpResponse {
   public status?: number = 200;
   public message?: string = '';
   public success?: boolean = true;
-  public errorCode?: number = 0;
+  public errorCode?: number | string = 0;
   public noWrapper?: boolean = false;
 
   constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success' | 'noWrapper'>) {
