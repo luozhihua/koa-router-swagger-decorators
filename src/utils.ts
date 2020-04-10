@@ -76,6 +76,7 @@ export class HttpResponse {
     this.data = data;
     this.status = status;
     this.message = message;
+    this.errorCode = errorCode;
     this.success = success;
     this.noWrapper = noWrapper;
   }
