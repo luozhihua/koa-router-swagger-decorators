@@ -6,8 +6,8 @@ export declare const RouterEvents: Pick<Config, 'beforeController' | 'afterContr
 export declare function createRouter(config: Config): SwaggerRouter;
 export declare function prefix(basePath?: string): (target: any) => any;
 export interface DecoratorWrapperOptions {
-    before?(ctx: Context): Promise<void>;
-    after?(ctx: Context): Promise<any>;
+    before?(ctx: Context, target: any, name: string): Promise<void>;
+    after?(ctx: Context, target: any, name: string): Promise<any>;
     formatter?: ResponseFormatter;
     excludes?: string[];
 }

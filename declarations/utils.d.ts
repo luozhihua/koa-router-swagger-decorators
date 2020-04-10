@@ -15,8 +15,8 @@ export interface Config {
     swaggerConfig?: SwaggerConfig;
     recursive?: boolean;
     validatable?: boolean;
-    beforeController?: (ctx: Context) => Promise<any>;
-    afterController?: (ctx: Context) => any;
+    beforeController?: (ctx: Context, target: any, name: string) => Promise<any>;
+    afterController?: (ctx: Context, target: any, name: string) => any;
     formatter?: ResponseFormatter;
 }
 export interface ResponseData {
