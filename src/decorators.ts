@@ -93,15 +93,18 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
         ctx.status = 200;
         ctx.message = 'ok';
 
-        await emitter.emit(`${ EVENT_KEY }-before`, ctx); // Before hooks
-        let result: ResponseData = await originFunction(ctx);
-        await emitter.emit(`${ EVENT_KEY }-after`, ctx); // After hooks
+        try {
+          await emitter.emit(`${ EVENT_KEY }-before`, ctx, NAME); // Before hooks
+          let result: ResponseData = await originFunction(ctx);
+          await emitter.emit(`${ EVENT_KEY }-after`, ctx, NAME); // After hooks
+          result = typeof formatter === 'function' ? formatter(ctx, result) : defaultFormatter(ctx, result);
 
-        result = typeof formatter === 'function' ? formatter(ctx, result) : defaultFormatter(ctx, result);
-
-        // 如果 Formatter和控制器都没有返回任何数值，则使用 ctx.body的值
-        // 优先使用返回值，其次是 ctx.body;
-        ctx.body = typeof result !== 'undefined' ? result : ctx.body;
+          // 如果 Formatter和控制器都没有返回任何数值，则使用 ctx.body的值
+          // 优先使用返回值，其次是 ctx.body;
+          ctx.body = typeof result !== 'undefined' ? result : ctx.body;
+        } catch (err) {
+          console.log(err);
+        }
 
         // 避免使用此装饰器后的方法无法获取返回值。
         return ctx.body;
