@@ -41,7 +41,7 @@ export declare class HttpResponse {
     status?: number;
     message?: string;
     success?: boolean;
-    errorCode?: number;
+    errorCode?: number | string;
     noWrapper?: boolean;
     constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success' | 'noWrapper'>);
 }
