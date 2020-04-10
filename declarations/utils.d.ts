@@ -24,7 +24,7 @@ export interface ResponseData {
     message: string;
     success: boolean;
     data: any;
-    errorCode?: number;
+    errorCode?: number | string;
 }
 export interface KoaRouterConfig {
     controllersDir: string;
@@ -33,8 +33,8 @@ export interface KoaRouterConfig {
 }
 export declare class HttpStatusError extends Error {
     status: number;
-    errorCode: number;
-    constructor(status: number, message: string, errorCode?: number);
+    errorCode: number | string;
+    constructor(status: number, message: string, errorCode?: number | string);
 }
 export declare class HttpResponse {
     data: any;
