@@ -39,7 +39,7 @@ export interface ResponseData {
   message: string;
   success: boolean;
   data: any;
-  errorCode?: number;
+  errorCode?: number | string;
 }
 
 export interface KoaRouterConfig {
@@ -53,9 +53,9 @@ export interface KoaRouterConfig {
  */
 export class HttpStatusError extends Error {
   public status: number;
-  public errorCode: number;
+  public errorCode: number | string;
 
-  constructor(status: number, message: string, errorCode?: number) {
+  constructor(status: number, message: string, errorCode?: number | string) {
     super(message);
     this.status = status;
     this.errorCode = errorCode || 0;
