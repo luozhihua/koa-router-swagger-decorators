@@ -57,10 +57,11 @@ export function prefix(basePath: string = '/') {
 export interface DecoratorWrapperOptions {
   before? (ctx: Context, target: any, name: string): Promise<void>;
   after? (ctx: Context, target: any, name: string): Promise<any>;
+  beforeFirst? (ctx: Context, target: any, name: string): Promise<void>;
+  afterLast? (ctx: Context, target: any, name: string): Promise<any>;
   formatter?: ResponseFormatter;
-  excludes?: string[];
 }
-export function wrapperProperty(target: any, descriptor: PropertyDescriptor, options: Pick<DecoratorWrapperOptions, 'after' | 'before' | 'formatter'> = {}) {
+export function wrapperProperty(target: any, descriptor: PropertyDescriptor, options: DecoratorWrapperOptions = {}) {
   const { before, after, formatter} = options;
   const originFunction = descriptor.value;
   const NAME = originFunction.name;
@@ -73,15 +74,12 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
   target.decoratorEmitter = target.decoratorEmitter || new EventEmitter();
   let emitter = target.decoratorEmitter;
 
-  if (typeof before === 'function') {
-    emitter.setMaxListeners(emitter.getMaxListeners() + 1);
-    emitter.on(`${ EVENT_KEY }-before`, before);
-  }
-
-  if (typeof after === 'function') {
-    emitter.setMaxListeners(emitter.getMaxListeners() + 1);
-    emitter.on(`${ EVENT_KEY }-after`, after);
-  }
+  ['before', 'beforeFirst', 'after', 'afterLast'].forEach(evt => {
+    if (typeof options[evt] === 'function') {
+      emitter.setMaxListeners(emitter.getMaxListeners() + 1);
+      emitter.on(`${ EVENT_KEY }-${evt}`, before);
+    }
+  });
 
   if (!originFunction.wrappedDecorator) {
 
@@ -93,9 +91,11 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
         ctx.status = 200;
         ctx.message = 'ok';
 
+        await emitter.emit(`${ EVENT_KEY }-beforeFirst`, ctx, target, NAME); // Before hooks
         await emitter.emit(`${ EVENT_KEY }-before`, ctx, target, NAME); // Before hooks
         let result: ResponseData = await originFunction(ctx);
         await emitter.emit(`${ EVENT_KEY }-after`, ctx, target, NAME); // After hooks
+        await emitter.emit(`${ EVENT_KEY }-afterLast`, ctx, target, NAME); // After hooks
         result = typeof formatter === 'function' ? formatter(ctx, result) : defaultFormatter(ctx, result);
 
         // 如果 Formatter和控制器都没有返回任何数值，则使用 ctx.body的值
@@ -127,7 +127,7 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
 /**
  * 向指定类的所有 controller 注入 hook
  */
-export function wrapperAll(target, options: DecoratorWrapperOptions) {
+export function wrapperAll(target, options: DecoratorWrapperOptions & { excludes?: string[]}) {
   const { excludes = [] } = options;
 
   Object.getOwnPropertyNames(target)
@@ -160,8 +160,8 @@ export function requests(method: AllowedMethods, pathStr: string, formatter?: Re
 
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
     wrapperProperty(target, descriptor, {
-      before: RouterEvents.beforeController,
-      after: RouterEvents.afterController,
+      beforeFirst: RouterEvents.beforeController,
+      afterLast: RouterEvents.afterController,
       formatter: formatter as ResponseFormatter || RouterEvents.formatter,
     });
 
