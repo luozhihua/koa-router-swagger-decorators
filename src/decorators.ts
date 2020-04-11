@@ -62,7 +62,7 @@ export interface DecoratorWrapperOptions {
   formatter?: ResponseFormatter;
 }
 export function wrapperProperty(target: any, descriptor: PropertyDescriptor, options: DecoratorWrapperOptions = {}) {
-  const { before, after, formatter} = options;
+  const {formatter} = options;
   const originFunction = descriptor.value;
   const NAME = originFunction.name;
   const EVENT_KEY = `${ target.name }-${ NAME }`;
@@ -77,7 +77,7 @@ export function wrapperProperty(target: any, descriptor: PropertyDescriptor, opt
   ['before', 'beforeFirst', 'after', 'afterLast'].forEach(evt => {
     if (typeof options[evt] === 'function') {
       emitter.setMaxListeners(emitter.getMaxListeners() + 1);
-      emitter.on(`${ EVENT_KEY }-${evt}`, before);
+      emitter.on(`${ EVENT_KEY }-${evt}`, options[evt]);
     }
   });
 

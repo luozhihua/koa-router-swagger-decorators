@@ -27,7 +27,7 @@
   "types": "./declarations",
   "gitHooks": {},
   "dependencies": {
-    "koa-swagger-decorator": "^1.6.1",
+    "koa-swagger-decorator": "^1.6.4",
     "merge": "^1.2.1",
     "promise-events": "^0.1.8"
   },
