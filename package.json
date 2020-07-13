@@ -9,7 +9,6 @@
     "prepare": "git init && git config core.hooksPath .githooks",
     "test": "cross-env-shell NODE_ENV=unit-test PORT=10000 nyc mocha -r ts-node/register tests/spec/**/*.spec.ts --timeout 200000 --exit",
     "build": "tsc",
-    "prepublish": "npm run build",
     "preversion": "npm test",
     "version": "npm run build && git add -A",
     "postversion": "git push && git push --tags"
