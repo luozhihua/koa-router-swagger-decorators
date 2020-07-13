@@ -1,8 +1,8 @@
-import { Context } from 'koa';
-import { SwaggerRouter } from 'koa-swagger-decorator';
-import { Config, AllowedMethods, ResponseFormatter } from './utils';
+import { Context } from "koa";
+import { SwaggerRouter } from "koa-swagger-decorator";
+import { Config, AllowedMethods, ResponseFormatter } from "./utils";
 export declare const rootRouter: SwaggerRouter;
-export declare const RouterEvents: Pick<Config, 'beforeController' | 'afterController' | 'formatter'>;
+export declare const RouterEvents: Pick<Config, "beforeController" | "afterController" | "formatter">;
 export declare function createRouter(config: Config): SwaggerRouter;
 export declare function prefix(basePath?: string): (target: any) => any;
 export interface DecoratorWrapperOptions {
@@ -11,6 +11,9 @@ export interface DecoratorWrapperOptions {
     beforeFirst?(ctx: Context, target: any, name: string): Promise<void>;
     afterLast?(ctx: Context, target: any, name: string): Promise<any>;
     formatter?: ResponseFormatter;
+}
+export interface DecoratorWrapperAllOptions extends DecoratorWrapperOptions {
+    excludes?: string[];
 }
 export declare function wrapperProperty(target: any, descriptor: PropertyDescriptor, options?: DecoratorWrapperOptions): any;
 export declare function wrapperAll(target: any, options: DecoratorWrapperOptions & {

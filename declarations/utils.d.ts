@@ -1,5 +1,5 @@
-import { Context } from 'koa';
-export declare type AllowedMethods = 'get' | 'post' | 'put' | 'delete' | 'patch' | 'option';
+import { Context } from "koa";
+export declare type AllowedMethods = "get" | "post" | "put" | "delete" | "patch" | "option";
 export declare const GET: AllowedMethods;
 export declare const POST: AllowedMethods;
 export declare const DELETE: AllowedMethods;
@@ -43,6 +43,7 @@ export declare class HttpResponse {
     success?: boolean;
     errorCode?: number | string;
     noWrapper?: boolean;
-    constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success' | 'noWrapper'>);
+    constructor(options: Pick<HttpResponse, "data" | "status" | "errorCode" | "message" | "success" | "noWrapper">);
 }
 export declare const defaultFormatter: ResponseFormatter;
+export declare function namedFunction(target: any, funcName: any, func: any): (...params: any[]) => any;
