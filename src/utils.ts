@@ -1,22 +1,26 @@
+import { Context } from "koa";
 
-import { Context } from 'koa';
-
-export type AllowedMethods = 'get' | 'post' | 'put' | 'delete' |  'patch' | 'option';
-export const GET: AllowedMethods = 'get';
-export const POST: AllowedMethods = 'post';
-export const DELETE: AllowedMethods = 'delete';
-export const PUT: AllowedMethods = 'put';
-export const PATCH: AllowedMethods = 'patch';
-export const OPTION: AllowedMethods = 'option';
+export type AllowedMethods =
+  | "get"
+  | "post"
+  | "put"
+  | "delete"
+  | "patch"
+  | "option";
+export const GET: AllowedMethods = "get";
+export const POST: AllowedMethods = "post";
+export const DELETE: AllowedMethods = "delete";
+export const PUT: AllowedMethods = "put";
+export const PATCH: AllowedMethods = "patch";
+export const OPTION: AllowedMethods = "option";
 
 export interface SwaggerConfig {}
 
-export type ResponseFormatter = (ctx: Context, result: any) => any
+export type ResponseFormatter = (ctx: Context, result: any) => any;
 export interface Config {
   controllersDir: string;
   packageFile: string;
   swaggerConfig?: SwaggerConfig;
-
 
   /**
    * 是否自动扫描 controllerDir 所指定目录的子目录; default: true;
@@ -65,13 +69,25 @@ export class HttpStatusError extends Error {
 export class HttpResponse {
   public data: any;
   public status?: number = 200;
-  public message?: string = '';
+  public message?: string = "";
   public success?: boolean = true;
   public errorCode?: number | string = 0;
   public noWrapper?: boolean = false;
 
-  constructor(options: Pick<HttpResponse, 'data' | 'status' | 'errorCode' | 'message' | 'success' | 'noWrapper'>) {
-    let { data, message = '', status = 200, success = true, errorCode = 0, noWrapper = false} = options;
+  constructor(
+    options: Pick<
+      HttpResponse,
+      "data" | "status" | "errorCode" | "message" | "success" | "noWrapper"
+    >
+  ) {
+    let {
+      data,
+      message = "",
+      status = 200,
+      success = true,
+      errorCode = 0,
+      noWrapper = false,
+    } = options;
 
     this.data = data;
     this.status = status;
@@ -82,11 +98,18 @@ export class HttpResponse {
   }
 }
 
-export const defaultFormatter: ResponseFormatter = (ctx: Context, result: any): any => {
-  if (result && typeof result.data === 'undefined' && typeof result.success === 'undefined') {
+export const defaultFormatter: ResponseFormatter = (
+  ctx: Context,
+  result: any
+): any => {
+  if (
+    result &&
+    typeof result.data === "undefined" &&
+    typeof result.success === "undefined"
+  ) {
     return new HttpResponse({
       data: result,
-      message: ctx.message || ctx.state.message || '',
+      message: ctx.message || ctx.state.message || "",
       status: 200,
       errorCode: ctx.state.errorCode || 0,
       success: true,
@@ -94,7 +117,7 @@ export const defaultFormatter: ResponseFormatter = (ctx: Context, result: any): 
   } else if (!result) {
     return new HttpResponse({
       data: ctx.body || null,
-      message: ctx.message || ctx.state.message || '',
+      message: ctx.message || ctx.state.message || "",
       status: 200,
       errorCode: ctx.state.errorCode || 0,
       success: true,
@@ -102,4 +125,28 @@ export const defaultFormatter: ResponseFormatter = (ctx: Context, result: any): 
   } else {
     return result;
   }
+};
+
+/**
+ * 将匿名函数转为具名函数
+ *
+ * @param funcName 函数名称
+ * @param func 匿名函数或具名函数
+ * @param target 函数执行时要附加到的对象
+ */
+export function namedFunction(target, funcName, func) {
+  const dynamicNameFuncs = {
+    [`${funcName}`]: function (...params) {
+      return func.apply(target || null, params);
+    },
+  };
+  const newFunc = dynamicNameFuncs[funcName];
+
+  if (newFunc.name !== funcName) {
+    throw new Error(
+      "[koa-router-swagger-decorators] - Decorator wrapper does not supported dynamic function name."
+    );
+  }
+
+  return newFunc;
 }

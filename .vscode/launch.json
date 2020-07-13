@@ -1,56 +1,51 @@
+{
+  "version": "0.2.0",
+  "configurations": [
     {
-      "version": "0.2.0",
-      "configurations": [
+      "type": "node",
+      "request": "attach",
+      "name": "Attach",
+      "port": 6788,
+      "restart": true,
+      "protocol": "inspector"
+    },
 
-        {
-          "type": "node",
-          "request": "attach",
-          "name": "Attach",
-          "port": 5858,
-          "restart": true,
-          "protocol": "inspector"
-        },
+    {
+      "name": "Debug TSNode",
+      "type": "node",
+      "request": "launch",
+      "args": [
+        "${workspaceRoot}/tests/e2e/index.ts" // 入口文件
+      ],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "sourceMaps": true,
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      // "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
 
-        {
-          "name": "Debug TSNode",
-          "type": "node",
-          "request": "launch",
-          "args": [
-            "${workspaceRoot}/tests/e2e/index.ts" // 入口文件
-          ],
-          "runtimeArgs": [
-            "--nolazy",
-            "-r",
-            "ts-node/register"
-          ],
-          "sourceMaps": true,
-          "cwd": "${workspaceRoot}",
-          "protocol": "inspector",
-          // "console": "integratedTerminal",
-          "internalConsoleOptions": "neverOpen"
-        },
-
-        {
-          "type": "node",
-          "request": "launch",
-          "name": "Mocha",
-          "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-          "args": [
-              "-r",
-              "ts-node/register",
-              "--no-cache",
-              "--timeout",
-              "999999999",
-              "--colors",
-              "${workspaceFolder}/tests/unit/**/*.spec.ts",
-              "--exit"
-          ],
-          "env": {
-            "NODE_ENV": "unit-test",
-            "PORT": "10001"
-          },
-          "internalConsoleOptions": "neverOpen",
-          "protocol": "inspector"
-        }
-      ]
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Mocha",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "-r",
+        "ts-node/register",
+        "--no-cache",
+        "--timeout",
+        "999999999",
+        "--colors",
+        "${workspaceFolder}/tests/unit/**/*.spec.ts",
+        "--exit"
+      ],
+      "env": {
+        "NODE_ENV": "unit-test",
+        "PORT": "10001"
+      },
+      "internalConsoleOptions": "neverOpen",
+      "protocol": "inspector"
     }
+  ]
+}

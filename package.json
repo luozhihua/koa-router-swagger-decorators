@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "module": "src/index.ts",
   "scripts": {
-    "start": "ts-node ./tests/e2e",
+    "start": "ts-node-dev --prefer-ts --debug --transpile-only --inspect=0.0.0.0:6788 ./tests/e2e",
     "prepare": "git init && git config core.hooksPath .githooks",
     "test": "cross-env-shell NODE_ENV=unit-test PORT=10000 nyc mocha -r ts-node/register tests/spec/**/*.spec.ts --timeout 200000 --exit",
     "build": "tsc",
@@ -27,7 +27,7 @@
   "types": "./declarations",
   "gitHooks": {},
   "dependencies": {
-    "koa-swagger-decorator": "^1.6.4",
+    "koa-swagger-decorator": "^1.6.8",
     "merge": "^1.2.1",
     "promise-events": "^0.1.8"
   },
