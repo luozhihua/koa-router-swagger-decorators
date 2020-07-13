@@ -86,6 +86,10 @@ export function wrapperProperty(
   descriptor: PropertyDescriptor,
   options: DecoratorWrapperOptions = {}
 ) {
+  console.warn(
+    "Deprecated， Starting from version 4.0, the wrapperProperty method will be deprecated and no longer recommended"
+  );
+
   const { formatter } = options;
   const originFunction = descriptor.value;
   const NAME = originFunction.name;
@@ -162,6 +166,9 @@ export function wrapperAll(
   target,
   options: DecoratorWrapperOptions & { excludes?: string[] }
 ) {
+  console.warn(
+    "Deprecated， Starting from version 4.0, the wrapperAll method will be deprecated and no longer recommended"
+  );
   const { excludes = [] } = options;
 
   Object.getOwnPropertyNames(target)
@@ -190,6 +197,10 @@ export function requests(
   pathStr: string,
   formatter?: ResponseFormatter | boolean
 ) {
+  console.warn(
+    "Deprecated， Starting from version 4.0, the requests method will be deprecated and no longer recommended"
+  );
+
   // 如果 request 被装饰的函数有返回值则优先使用返回值，否则使用原始 ctx.body 的值；
   if (typeof formatter === "boolean") {
     formatter = (ctx, res) => res || ctx.body;

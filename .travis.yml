@@ -1,13 +1,15 @@
 os:
-- linux
+  - linux
 language: node_js
 node_js:
   - stable
-  - '8'
-  - '9'
-  - '10'
-  - '11'
-  - '12'
+  - "8"
+  - "9"
+  - "10"
+  - "11"
+  - "12"
+  - "13"
+  - "14"
 
 # 缓存依赖，节省持续集成时间
 cache:
@@ -16,18 +18,18 @@ cache:
     - node_modules
 
 before_install:
-- git config --global user.name "luozhihua"
-- git config --global user.email "mail@luozhihua.com"
+  - git config --global user.name "luozhihua"
+  - git config --global user.email "mail@luozhihua.com"
 
 install:
-- npm install -g npm
-- npm install
+  - npm install -g npm
+  - npm install
 
 # before_script:
 
 script:
-- npm test
-- npm run build
+  - npm test
+  - npm run build
 
 deploy:
   provider: npm
@@ -36,4 +38,3 @@ deploy:
   on:
     node_js: stable
     tags: true
-
