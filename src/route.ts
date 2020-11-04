@@ -43,7 +43,11 @@ export function formatter(formatter: ResponseFormatter | boolean): any {
  * @param {string} pathStr
  * @returns
  */
-export function route(method: AllowedMethods, pathStr: string) {
+export function route(
+  method: AllowedMethods,
+  pathStr: string,
+  render: boolean = false
+) {
   return function (target: any, name: string, descriptor: PropertyDescriptor) {
     const originFunction = descriptor.value;
     if (typeof originFunction !== "function") {
@@ -54,20 +58,23 @@ export function route(method: AllowedMethods, pathStr: string) {
     descriptor.value = namedFunction(target, NAME, async (ctx, next) => {
       const formatter = descriptor.value.formatter;
       let result: ResponseData = await originFunction(ctx, next);
-      result =
-        typeof formatter === "function"
-          ? formatter(ctx, result)
-          : defaultFormatter(ctx, result);
+      result = render
+        ? result
+        : typeof formatter === "function"
+        ? formatter(ctx, result)
+        : defaultFormatter(ctx, result);
 
       // 如果 Formatter和控制器都没有返回任何数值，则使用 ctx.body的值
       // 优先使用返回值，其次是 ctx.body;
       ctx.body = typeof result !== "undefined" ? result : ctx.body;
-      ctx.status = result?.status || ctx.status;
+      ctx.status = result ? result.status || ctx.status : ctx.status;
 
       // 避免使用此装饰器后的方法无法获取返回值。
       return ctx.body;
     });
 
+    // 将被装饰函数或方法的原属性拷贝到新函数或方法，
+    // 避免丢失@query, @path, @body, @formData 等其他装饰器元数据
     Object.getOwnPropertyNames(originFunction).map((prop: string) => {
       if (!["name", "length"].includes(prop)) {
         descriptor.value[prop] = originFunction[prop];
