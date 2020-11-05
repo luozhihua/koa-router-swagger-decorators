@@ -104,13 +104,12 @@ export const defaultFormatter: ResponseFormatter = (
   result: any
 ): any => {
   if (result instanceof HttpResponse) {
-    ctx.status = result.status || ctx.status || 200;
     return result;
   } else {
     return new HttpResponse({
       data: result || ctx.body || null,
       message: ctx.message || ctx.state.message || "",
-      status: ctx.status || 200,
+      status: 200,
       errorCode: ctx.state.errorCode || 0,
       success: true,
     });
