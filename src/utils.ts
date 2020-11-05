@@ -109,7 +109,7 @@ export const defaultFormatter: ResponseFormatter = (
     return new HttpResponse({
       data: result || ctx.body || null,
       message: ctx.message || ctx.state.message || "",
-      status: 200,
+      status: ctx.status,
       errorCode: ctx.state.errorCode || 0,
       success: true,
     });
