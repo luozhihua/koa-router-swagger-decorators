@@ -58,8 +58,8 @@ async function doValidate(ctx, target, descriptor, NAME) {
       }
     })
   );
-  const errors = errorList.filter((e) => e !== null)[0];
-  if (errors) {
+  const errors = errorList.filter((e) => e !== null);
+  if (errors.length > 0) {
     throw new HttpStatusError(400, "Request validate failed.", errors);
   }
 }
