@@ -6,14 +6,14 @@ import {
 } from "koa-swagger-decorator";
 import { RouterEvents } from "./decorators";
 import {
-  Config,
   ResponseData,
   AllowedMethods,
   defaultFormatter,
-  ResponseFormatter,
   namedFunction,
   HttpStatusError,
 } from "./utils";
+import { config, Config, ResponseFormatter } from "./config";
+import defaultValidation from "./validate";
 
 /**
  * Koa Router request decorator
@@ -47,7 +47,7 @@ export function validate(validation: typeof RouterEvents.validation) {
 async function doValidate(ctx, target, descriptor, NAME) {
   const validations: typeof RouterEvents.validation[] = [
     descriptor.value.validation,
-    RouterEvents.validation,
+    RouterEvents.validation || defaultValidation,
   ];
   const errorList = await Promise.all(
     validations.map(async (validation) => {
@@ -90,7 +90,9 @@ export function route(
       ctx.status = 200;
 
       // 参数验证
-      await doValidate(ctx, target, descriptor, NAME);
+      if (config.validatable) {
+        await doValidate(ctx, target, descriptor, NAME);
+      }
 
       let result: ResponseData = await originFunction(ctx, next);
       result = render

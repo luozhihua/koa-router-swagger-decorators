@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as EventEmitter from "promise-events";
 import { Context } from "koa";
+import * as merge from "merge";
 import {
   SwaggerRouter,
   request as swaggerRequest,
@@ -10,13 +11,13 @@ import {
 import swagger from "./swagger";
 
 import {
-  Config,
   ResponseData,
   AllowedMethods,
   defaultFormatter,
-  ResponseFormatter,
   namedFunction,
 } from "./utils";
+
+import { config, Config, ResponseFormatter } from "./config";
 
 export const rootRouter = new SwaggerRouter();
 export const RouterEvents: Pick<
@@ -27,13 +28,15 @@ export const RouterEvents: Pick<
 /**
  * Create a root Router for Koa app;
  */
-export function createRouter(config: Config) {
-  RouterEvents.beforeController = config.beforeController;
-  RouterEvents.afterController = config.afterController;
-  RouterEvents.formatter = config.formatter;
-  RouterEvents.validation = config.validation;
+export function createRouter(options: Config) {
+  RouterEvents.beforeController = options.beforeController;
+  RouterEvents.afterController = options.afterController;
+  RouterEvents.formatter = options.formatter;
+  RouterEvents.validation = options.validation;
 
-  const router: any = swagger(config);
+  merge(config, options);
+
+  const router: any = swagger(options);
 
   rootRouter.use(router.routes());
   return rootRouter;
@@ -88,7 +91,7 @@ export function wrapperProperty(
   options: DecoratorWrapperOptions = {}
 ) {
   console.warn(
-    "Deprecated， Starting from version 4.0, the wrapperProperty method will be deprecated and no longer recommended"
+    "[koa-router-swagger-decorators] - Deprecated， Starting from version 4.0, the wrapperProperty method will be deprecated and no longer recommended"
   );
 
   const { formatter } = options;
