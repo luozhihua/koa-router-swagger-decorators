@@ -44,6 +44,26 @@ export function validate(validation: typeof RouterEvents.validation) {
   };
 }
 
+async function doValidate(ctx, target, descriptor, NAME) {
+  const validations: typeof RouterEvents.validation[] = [
+    descriptor.value.validation,
+    RouterEvents.validation,
+  ];
+  const errorList = await Promise.all(
+    validations.map(async (validation) => {
+      if (validation) {
+        return validation(ctx, target, NAME);
+      } else {
+        return Promise.resolve(null);
+      }
+    })
+  );
+  const errors = errorList.filter((e) => !!e)[0];
+  if (errors) {
+    throw new HttpStatusError(400, JSON.stringify(errors, null, 4));
+  }
+}
+
 /**
  * Koa Router request decorator
  *
@@ -66,16 +86,9 @@ export function route(
     const NAME = originFunction.name;
     descriptor.value = namedFunction(target, NAME, async (ctx, next) => {
       const formatter = descriptor.value.formatter;
-      const validation: typeof RouterEvents.validation =
-        descriptor.value.validation || RouterEvents.validation;
 
       // 参数验证
-      if (validation) {
-        const errors = await validation(ctx, target, NAME);
-        if (errors) {
-          throw new HttpStatusError(400, JSON.stringify(errors, null, 4));
-        }
-      }
+      await doValidate(ctx, target, descriptor, NAME);
 
       let result: ResponseData = await originFunction(ctx, next);
       result = render
@@ -96,18 +109,5 @@ export function route(
       // 避免使用此装饰器后的方法无法获取返回值。
       return ctx.body;
     });
-
-    // 将被装饰函数或方法的原属性拷贝到新函数或方法，
-    // 避免丢失@query, @path, @body, @formData 等其他装饰器元数据
-    Object.getOwnPropertyNames(originFunction).map((prop: string) => {
-      if (!["name", "length"].includes(prop)) {
-        descriptor.value[prop] = originFunction[prop];
-      }
-    });
-    descriptor.value.method = method;
-    descriptor.value.path = pathStr;
-    descriptor.value.isRouterHandler = true;
-    swaggerRequest(method, pathStr)(target, name, descriptor);
-    return descriptor;
   };
 }
