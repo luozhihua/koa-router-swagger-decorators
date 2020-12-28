@@ -21,7 +21,7 @@ import {
 export const rootRouter = new SwaggerRouter();
 export const RouterEvents: Pick<
   Config,
-  "beforeController" | "afterController" | "formatter"
+  "beforeController" | "afterController" | "formatter" | "validation"
 > = {};
 
 /**
@@ -31,6 +31,7 @@ export function createRouter(config: Config) {
   RouterEvents.beforeController = config.beforeController;
   RouterEvents.afterController = config.afterController;
   RouterEvents.formatter = config.formatter;
+  RouterEvents.validation = config.validation;
 
   const router: any = swagger(config);
 
@@ -167,7 +168,7 @@ export function wrapperAll(
   options: DecoratorWrapperOptions & { excludes?: string[] }
 ) {
   console.warn(
-    "Deprecated， Starting from version 4.0, the wrapperAll method will be deprecated and no longer recommended"
+    "[koa-router-swagger-decorators] - Deprecated， Starting from version 4.0, the wrapperAll method will be deprecated and no longer recommended"
   );
   const { excludes = [] } = options;
 
@@ -198,7 +199,7 @@ export function requests(
   formatter?: ResponseFormatter | boolean
 ) {
   console.warn(
-    "Deprecated， Starting from version 4.0, the requests method will be deprecated and no longer recommended"
+    "[koa-router-swagger-decorators] - Deprecated， Starting from version 4.0, the requests method will be deprecated and no longer recommended"
   );
 
   // 如果 request 被装饰的函数有返回值则优先使用返回值，否则使用原始 ctx.body 的值；

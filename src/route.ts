@@ -4,6 +4,7 @@ import {
   prefix as swaggerPrefix,
   middlewares,
 } from "koa-swagger-decorator";
+import { RouterEvents } from "./decorators";
 import {
   Config,
   ResponseData,
@@ -11,6 +12,7 @@ import {
   defaultFormatter,
   ResponseFormatter,
   namedFunction,
+  HttpStatusError,
 } from "./utils";
 
 /**
@@ -31,6 +33,13 @@ export function formatter(formatter: ResponseFormatter | boolean): any {
     if (typeof formatter === "function") {
       descriptor.value.formatter = formatter;
     }
+    return descriptor;
+  };
+}
+
+export function validate(validation: typeof RouterEvents.validation) {
+  return function (target: any, name: string, descriptor: PropertyDescriptor) {
+    descriptor.value.validation = validation;
     return descriptor;
   };
 }
@@ -57,6 +66,17 @@ export function route(
     const NAME = originFunction.name;
     descriptor.value = namedFunction(target, NAME, async (ctx, next) => {
       const formatter = descriptor.value.formatter;
+      const validation: typeof RouterEvents.validation =
+        descriptor.value.validation || RouterEvents.validation;
+
+      // 参数验证
+      if (validation) {
+        const errors = await validation(ctx, target, NAME);
+        if (errors) {
+          throw new HttpStatusError(400, JSON.stringify(errors, null, 4));
+        }
+      }
+
       let result: ResponseData = await originFunction(ctx, next);
       result = render
         ? result
