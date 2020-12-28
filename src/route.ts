@@ -60,6 +60,7 @@ async function doValidate(ctx, target, descriptor, NAME) {
   );
   const errors = errorList.filter((e) => e !== null);
   if (errors.length > 0) {
+    ctx.status = 400;
     throw new HttpStatusError(400, "Request validate failed.", errors);
   }
 }
@@ -86,6 +87,7 @@ export function route(
     const NAME = originFunction.name;
     descriptor.value = namedFunction(target, NAME, async (ctx, next) => {
       const formatter = descriptor.value.formatter;
+      ctx.status = 200;
 
       // 参数验证
       await doValidate(ctx, target, descriptor, NAME);
@@ -100,11 +102,6 @@ export function route(
       // 如果 Formatter和控制器都没有返回任何数值，则使用 ctx.body的值
       // 优先使用返回值，其次是 ctx.body;
       ctx.body = typeof result !== "undefined" ? result : ctx.body;
-      // ctx.status = render
-      //   ? ctx.status
-      //   : result
-      //   ? result.status || 200
-      //   : ctx.status;
 
       // 避免使用此装饰器后的方法无法获取返回值。
       return ctx.body;
