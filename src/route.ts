@@ -109,5 +109,18 @@ export function route(
       // 避免使用此装饰器后的方法无法获取返回值。
       return ctx.body;
     });
+
+    // 将被装饰函数或方法的原属性拷贝到新函数或方法，
+    // 避免丢失@query, @path, @body, @formData 等其他装饰器元数据
+    Object.getOwnPropertyNames(originFunction).map((prop: string) => {
+      if (!["name", "length"].includes(prop)) {
+        descriptor.value[prop] = originFunction[prop];
+      }
+    });
+    descriptor.value.method = method;
+    descriptor.value.path = pathStr;
+    descriptor.value.isRouterHandler = true;
+    swaggerRequest(method, pathStr)(target, name, descriptor);
+    return descriptor;
   };
 }
