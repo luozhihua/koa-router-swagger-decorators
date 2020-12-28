@@ -2,7 +2,7 @@ import { Context } from "koa";
 import { SwaggerRouter } from "koa-swagger-decorator";
 import { Config, AllowedMethods, ResponseFormatter } from "./utils";
 export declare const rootRouter: SwaggerRouter;
-export declare const RouterEvents: Pick<Config, "beforeController" | "afterController" | "formatter">;
+export declare const RouterEvents: Pick<Config, "beforeController" | "afterController" | "formatter" | "validation">;
 export declare function createRouter(config: Config): SwaggerRouter;
 export declare function prefix(basePath?: string): (target: any) => any;
 export interface DecoratorWrapperOptions {

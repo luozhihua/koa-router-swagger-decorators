@@ -15,6 +15,7 @@ export interface Config {
     swaggerConfig?: SwaggerConfig;
     recursive?: boolean;
     validatable?: boolean;
+    validation?: <T = boolean>(ctx: Context, target: any, name: string) => Promise<T>;
     beforeController?: (ctx: Context, target: any, name: string) => Promise<any>;
     afterController?: (ctx: Context, target: any, name: string) => Promise<any>;
     formatter?: ResponseFormatter;
