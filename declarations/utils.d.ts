@@ -25,7 +25,6 @@ export interface ResponseData {
     message: string;
     success: boolean;
     data: any;
-    errorCode?: number | string;
 }
 export interface KoaRouterConfig {
     controllersDir: string;
@@ -34,8 +33,8 @@ export interface KoaRouterConfig {
 }
 export declare class HttpStatusError extends Error {
     status: number;
-    errorCode: number | string;
-    constructor(status: number, message: string, errorCode?: number | string);
+    errors: any;
+    constructor(status: number, message: string, errors?: any);
 }
 export declare class HttpResponse {
     data: any;
@@ -43,8 +42,9 @@ export declare class HttpResponse {
     message?: string;
     success?: boolean;
     errorCode?: number | string;
+    errors?: any;
     noWrapper?: boolean;
-    constructor(options: Pick<HttpResponse, "data" | "status" | "errorCode" | "message" | "success" | "noWrapper">);
+    constructor(options: Pick<HttpResponse, "data" | "status" | "errors" | "errorCode" | "message" | "success" | "noWrapper">);
 }
 export declare const defaultFormatter: ResponseFormatter;
 export declare function namedFunction(target: any, funcName: any, func: any): (...params: any[]) => any;
