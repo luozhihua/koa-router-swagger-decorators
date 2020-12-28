@@ -48,7 +48,6 @@ export interface ResponseData {
   message: string;
   success: boolean;
   data: any;
-  errorCode?: number | string;
 }
 
 export interface KoaRouterConfig {
@@ -62,13 +61,13 @@ export interface KoaRouterConfig {
  */
 export class HttpStatusError extends Error {
   public status: number;
-  public errorCode: number | string;
+  public errors: any;
 
-  constructor(status: number, message: string, errorCode?: number | string) {
+  constructor(status: number, message: string, errors?: any) {
     super(message);
     this.status = status;
     this.message = message;
-    this.errorCode = errorCode || 0;
+    this.errors = errors;
   }
 }
 
@@ -78,12 +77,19 @@ export class HttpResponse {
   public message?: string = "";
   public success?: boolean = true;
   public errorCode?: number | string = 0;
+  public errors?: any;
   public noWrapper?: boolean = false;
 
   constructor(
     options: Pick<
       HttpResponse,
-      "data" | "status" | "errorCode" | "message" | "success" | "noWrapper"
+      | "data"
+      | "status"
+      | "errors"
+      | "errorCode"
+      | "message"
+      | "success"
+      | "noWrapper"
     >
   ) {
     let {
@@ -91,14 +97,14 @@ export class HttpResponse {
       message = "",
       status = 200,
       success = true,
-      errorCode = 0,
+      errors = null,
       noWrapper = false,
     } = options;
 
     this.data = data;
     this.status = status;
     this.message = message;
-    this.errorCode = errorCode;
+    this.errors = errors;
     this.success = success;
     this.noWrapper = noWrapper;
   }
@@ -115,7 +121,6 @@ export const defaultFormatter: ResponseFormatter = (
       data: result || ctx.body || null,
       message: ctx.message || ctx.state.message || "",
       status: ctx.status,
-      errorCode: ctx.state.errorCode || 0,
       success: true,
     });
   }
