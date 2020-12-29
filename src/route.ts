@@ -13,7 +13,7 @@ import {
   HttpStatusError,
 } from "./utils";
 import { config, Config, ResponseFormatter } from "./config";
-import defaultValidation from "./validate";
+import defaultValidation from "./validator";
 
 /**
  * Koa Router request decorator

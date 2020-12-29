@@ -1,16 +1,20 @@
 import { Context } from "koa";
-import Ajv from "ajv";
+import Ajv, { JSONSchemaType } from "ajv";
 import addFormats from "ajv-formats";
-import { HttpStatusError } from "./utils";
+import { HttpStatusError } from "../utils";
 import { pick, update } from "lodash";
 
-interface Schema {
-  [k: string]: any;
-}
+// interface Schema {
+//   [k: string]: any;
+// }
 
-interface Params {
-  [k: string]: any;
-}
+export type Schema<T> = {
+  [K in keyof T]: JSONSchemaType<T[K], true>;
+};
+
+export type Params<T> = {
+  [K in keyof T]: T[K];
+};
 
 const jsonschemaOptions = {
   allowUnknownAttributes: true, // boolean
@@ -25,7 +29,7 @@ const jsonschemaOptions = {
  * 获取必要参数名
  * @param schema
  */
-function getRequiredParamsName(schema: Schema): string[] {
+function getRequiredParamsName<T>(schema: Schema<T>): string[] {
   const keys: string[] = Object.keys(schema);
   return keys.reduce((prev: string[], next, index) => {
     const key = keys[index];
@@ -44,7 +48,7 @@ function getRequiredParamsName(schema: Schema): string[] {
 /**
  *
  */
-function parseParams(schema: Schema, params: Params) {
+function parseParams<T>(schema: Schema<T>, params: Params<T>) {
   Object.keys(params).forEach((key: string) => {
     const type = schema[key] ? schema[key].type : null;
     if (type && ["number", "boolean"].includes(type)) {
@@ -56,7 +60,7 @@ function parseParams(schema: Schema, params: Params) {
   return params;
 }
 
-const ajv = new Ajv({
+export const ajv = new Ajv({
   verbose: true,
   allErrors: true,
   validateFormats: true,
@@ -93,8 +97,8 @@ ajv.addKeyword({
 function validateByAJV(
   name: string,
   paramsType: string,
-  params: Object,
-  schema: Object
+  params: Params<Object>,
+  schema: Schema<Object>
 ) {
   const schemaCopy = JSON.parse(JSON.stringify(schema));
   const requiresParams: string[] = getRequiredParamsName(schemaCopy);

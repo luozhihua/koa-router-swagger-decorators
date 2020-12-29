@@ -7,3 +7,9 @@ export {
   createRouter as default,
   requests as request,
 } from "./decorators";
+
+export {
+  ajv as validator,
+  Schema as ValidatorSchema,
+  Params,
+} from "./validator";
