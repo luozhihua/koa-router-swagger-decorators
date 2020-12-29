@@ -9,11 +9,11 @@ import { pick, update } from "lodash";
 // }
 
 export type Schema<T> = {
-  [K in keyof T]: JSONSchemaType<T[K], true>;
+  [K in keyof T]?: JSONSchemaType<T[K], true>;
 };
 
 export type Params<T> = {
-  [K in keyof T]: T[K];
+  [K in keyof T]?: T[K];
 };
 
 const jsonschemaOptions = {
