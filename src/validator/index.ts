@@ -87,7 +87,7 @@ ajv.addKeyword({
   errors: true,
 });
 
-function validateByAJV(
+async function validateByAJV(
   name: string,
   paramsType: string,
   params: Params<Object>,
@@ -96,6 +96,7 @@ function validateByAJV(
   const schemaCopy = JSON.parse(JSON.stringify(schema));
   const requiresParams: string[] = getRequiredParamsName(schemaCopy);
   const wrappedSchema = {
+    $async: true,
     type: "object",
     properties: schemaCopy,
     required: requiresParams,
@@ -104,7 +105,7 @@ function validateByAJV(
   params = parseParams(schema, params);
 
   const validate = ajv.compile(wrappedSchema);
-  const valid = validate(params, {
+  const valid = await validate(params, {
     dataPath: name,
     parentData: {},
     parentDataProperty: "",
@@ -144,8 +145,8 @@ export default async function KoaParamsValidator(
     formData: (ctx.request as any).body,
   };
 
-  const errors = Object.keys(schemas)
-    .map((type) => {
+  let errors = await Promise.all(
+    Object.keys(schemas).map((type) => {
       if (parameters[type]) {
         return (
           validateByAJV(
@@ -159,7 +160,25 @@ export default async function KoaParamsValidator(
         return null;
       }
     })
-    .filter((e) => e !== null);
+  );
+  errors = errors.filter((e) => e !== null);
+
+  // const errors = Object.keys(schemas)
+  //   .map((type) => {
+  //     if (parameters[type]) {
+  //       return (
+  //         validateByAJV(
+  //           `${target.name}.${name}(ctx.${type}) => ${type}`,
+  //           type,
+  //           parameters[type],
+  //           schemas[type]
+  //         ) || null
+  //       );
+  //     } else {
+  //       return null;
+  //     }
+  //   })
+  //   .filter((e) => e !== null);
 
   return errors.length === 0 ? null : errors;
 }
