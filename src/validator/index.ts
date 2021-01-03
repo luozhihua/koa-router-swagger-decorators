@@ -123,6 +123,7 @@ function validateByAJV(
             "dataPath",
           ]);
           update(picked, "dataPath", (v) => v.replace(/\//g, "."));
+          picked.paramsType = paramsType;
           return picked;
         })
       : null;
@@ -160,5 +161,18 @@ export default async function KoaParamsValidator(
     })
     .filter((e) => e !== null);
 
-  return errors.length === 0 ? null : errors;
+  const flattenErrors: { [k: string]: any } = {};
+  function flat(errs: any[]) {
+    errs.forEach((err) => {
+      if (Array.isArray(err)) {
+        flat(err);
+      } else {
+        flattenErrors[err.paramsType] = flattenErrors[err.paramsType] || [];
+        flattenErrors[err.paramsType].push(err);
+      }
+    });
+  }
+  flat(errors);
+
+  return flattenErrors.length === 0 ? null : flattenErrors;
 }
