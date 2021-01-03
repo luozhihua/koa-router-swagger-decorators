@@ -1,7 +1,7 @@
 import { Context } from "koa";
 import Ajv, { JSONSchemaType } from "ajv";
 import addFormats from "ajv-formats";
-import addKeywords from "ajv-keywords";
+import * as addKeywords from "ajv-keywords";
 import { HttpStatusError } from "../utils";
 import { pick, update } from "lodash";
 
@@ -68,7 +68,7 @@ export const ajv = new Ajv({
 }); // options can be passed, e.g. {allErrors: true}\
 
 addFormats(ajv, { mode: "fast", keywords: true });
-addKeywords(ajv);
+addKeywords.default(ajv);
 
 ajv.addKeyword({
   keyword: "numberlike",
