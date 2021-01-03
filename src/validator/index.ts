@@ -1,6 +1,7 @@
 import { Context } from "koa";
 import Ajv, { JSONSchemaType } from "ajv";
 import addFormats from "ajv-formats";
+import addKeywords from "ajv-keywords";
 import { HttpStatusError } from "../utils";
 import { pick, update } from "lodash";
 
@@ -64,18 +65,16 @@ export const ajv = new Ajv({
   verbose: true,
   allErrors: true,
   validateFormats: true,
-}); // options can be passed, e.g. {allErrors: true}
+}); // options can be passed, e.g. {allErrors: true}\
+
 addFormats(ajv, { mode: "fast", keywords: true });
+addKeywords(ajv);
 
 ajv.addKeyword({
   keyword: "numberlike",
   type: "string",
   schemaType: "number",
-  compile(schema) {
-    return function (data) {
-      return typeof data === "number" || /^\d+$/.test(data);
-    };
-  },
+  compile: () => (data) => typeof data === "number" || /^\d+$/.test(data),
   errors: true,
 });
 
@@ -83,14 +82,8 @@ ajv.addKeyword({
   keyword: "booleanlike",
   type: "string",
   schemaType: "boolean",
-  compile(schema) {
-    return function (data) {
-      return (
-        typeof data === "boolean" ||
-        ["true", "false"].includes(data.toLowerCase())
-      );
-    };
-  },
+  compile: () => (data) =>
+    typeof data === "boolean" || ["true", "false"].includes(data.toLowerCase()),
   errors: true,
 });
 
