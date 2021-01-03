@@ -104,31 +104,38 @@ async function validateByAJV(
 
   params = parseParams(schema, params);
 
-  const validate = ajv.compile(wrappedSchema);
-  const valid = await validate(params, {
-    dataPath: name,
-    parentData: {},
-    parentDataProperty: "",
-    dynamicAnchors: {},
-    rootData: params,
-  });
+  const validate: any = ajv.compile(wrappedSchema);
 
-  if (!valid) {
-    return validate.errors
-      ? validate.errors.map((e) => {
-          const picked = pick(e, [
-            "keyword",
-            "message",
-            "data",
-            "params",
-            "dataPath",
-          ]);
-          update(picked, "dataPath", (v) => v.replace(/\//g, "."));
-          picked.paramsType = paramsType;
-          return picked;
-        })
-      : null;
-  }
+  return new Promise((resolve) => {
+    validate(params, {
+      dataPath: name,
+      parentData: {},
+      parentDataProperty: "",
+      dynamicAnchors: {},
+      rootData: params,
+    })
+      .then(() => {
+        resolve(null);
+      })
+      .catch((err: any) => {
+        let errors: any = null;
+        if (err.errors) {
+          errors = err.errors.map((e: any) => {
+            const picked = pick(e, [
+              "keyword",
+              "message",
+              "data",
+              "params",
+              "dataPath",
+            ]);
+            update(picked, "dataPath", (v: any) => v.replace(/\//g, "."));
+            picked.paramsType = paramsType;
+            return picked;
+          });
+        }
+        resolve(errors);
+      });
+  });
 }
 
 export default async function KoaParamsValidator(
