@@ -52,7 +52,7 @@ async function doValidate(ctx, target, descriptor, NAME) {
   const errorList = await Promise.all(
     validations.map(async (validation) => {
       if (validation) {
-        return validation(ctx, target, NAME);
+        return await validation(ctx, target, NAME);
       } else {
         return Promise.resolve(null);
       }
