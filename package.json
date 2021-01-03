@@ -28,7 +28,7 @@
   "dependencies": {
     "ajv": "^7.0.2",
     "ajv-formats": "^1.5.1",
-    "ajv-keywords": "github:luozhihua/ajv-keywords",
+    "ajv-keywords": "github:luozhihua/ajv-keywords#patch-1",
     "koa-swagger-decorator": "^1.6.8",
     "merge": "^1.2.1",
     "promise-events": "^0.1.8"
