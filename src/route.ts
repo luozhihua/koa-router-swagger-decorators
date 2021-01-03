@@ -59,9 +59,25 @@ async function doValidate(ctx, target, descriptor, NAME) {
     })
   );
   const errors = errorList.filter((e) => e !== null);
-  if (errors.length > 0) {
+
+  let errorsCount = 0;
+  const flattenErrors: { [k: string]: any } = {};
+  function flat(errs: any[]) {
+    errs.forEach((err) => {
+      if (Array.isArray(err)) {
+        flat(err);
+      } else {
+        flattenErrors[err.paramsType] = flattenErrors[err.paramsType] || [];
+        flattenErrors[err.paramsType].push(err);
+        errorsCount += 1;
+      }
+    });
+  }
+  flat(errors);
+
+  if (errorsCount > 0) {
     ctx.status = 400;
-    throw new HttpStatusError(400, "Request validate failed.", errors);
+    throw new HttpStatusError(400, "Request validate failed.", flattenErrors);
   }
 }
 

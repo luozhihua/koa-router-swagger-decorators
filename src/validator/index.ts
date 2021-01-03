@@ -161,18 +161,5 @@ export default async function KoaParamsValidator(
     })
     .filter((e) => e !== null);
 
-  const flattenErrors: { [k: string]: any } = {};
-  function flat(errs: any[]) {
-    errs.forEach((err) => {
-      if (Array.isArray(err)) {
-        flat(err);
-      } else {
-        flattenErrors[err.paramsType] = flattenErrors[err.paramsType] || [];
-        flattenErrors[err.paramsType].push(err);
-      }
-    });
-  }
-  flat(errors);
-
-  return flattenErrors.length === 0 ? null : flattenErrors;
+  return errors.length === 0 ? null : errors;
 }
