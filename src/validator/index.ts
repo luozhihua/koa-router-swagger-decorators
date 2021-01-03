@@ -170,22 +170,5 @@ export default async function KoaParamsValidator(
   );
   errors = errors.filter((e) => e !== null);
 
-  // const errors = Object.keys(schemas)
-  //   .map((type) => {
-  //     if (parameters[type]) {
-  //       return (
-  //         validateByAJV(
-  //           `${target.name}.${name}(ctx.${type}) => ${type}`,
-  //           type,
-  //           parameters[type],
-  //           schemas[type]
-  //         ) || null
-  //       );
-  //     } else {
-  //       return null;
-  //     }
-  //   })
-  //   .filter((e) => e !== null);
-
   return errors.length === 0 ? null : errors;
 }
