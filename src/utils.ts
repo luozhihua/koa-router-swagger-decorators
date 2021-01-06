@@ -15,11 +15,11 @@ export const PUT: AllowedMethods = "put";
 export const PATCH: AllowedMethods = "patch";
 export const OPTION: AllowedMethods = "option";
 
-export interface ResponseData {
+export interface ResponseData<T = any> {
   status: number;
   message: string;
   success: boolean;
-  data: any;
+  data: T;
 }
 
 /**
@@ -37,8 +37,8 @@ export class HttpStatusError extends Error {
   }
 }
 
-export class HttpResponse {
-  public data: any;
+export class HttpResponse<T = any> {
+  public data: T;
   public status?: number = 200;
   public message?: string = "";
   public success?: boolean = true;
@@ -127,7 +127,7 @@ export const defaultFormatter: ResponseFormatter = (
  * @param func 匿名函数或具名函数
  * @param target 函数执行时要附加到的对象
  */
-export function namedFunction(target, funcName, func) {
+export function namedFunction(target: any, funcName: string, func: Function) {
   const dynamicNameFuncs = {
     [`${funcName}`]: function (...params) {
       return func.apply(target || null, params);
