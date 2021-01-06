@@ -6,19 +6,19 @@ export declare const DELETE: AllowedMethods;
 export declare const PUT: AllowedMethods;
 export declare const PATCH: AllowedMethods;
 export declare const OPTION: AllowedMethods;
-export interface ResponseData {
+export interface ResponseData<T = any> {
     status: number;
     message: string;
     success: boolean;
-    data: any;
+    data: T;
 }
 export declare class HttpStatusError extends Error {
     status: number;
     errors: any;
     constructor(status: number, message: string, errors?: any);
 }
-export declare class HttpResponse {
-    data: any;
+export declare class HttpResponse<T = any> {
+    data: T;
     status?: number;
     message?: string;
     success?: boolean;
@@ -28,4 +28,4 @@ export declare class HttpResponse {
     constructor(options: Pick<HttpResponse, "data" | "status" | "errors" | "errorCode" | "message" | "success" | "noWrapper">);
 }
 export declare const defaultFormatter: ResponseFormatter;
-export declare function namedFunction(target: any, funcName: any, func: any): (...params: any[]) => any;
+export declare function namedFunction(target: any, funcName: string, func: Function): (...params: any[]) => any;
