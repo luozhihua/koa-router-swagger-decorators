@@ -22,11 +22,14 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "outDir": "./lib",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.json"
+    "src/**/*.json",
+    "node_modules/ajv-keywords/src/index.ts"
   ],
   "exclude": [
     "node_modules",
