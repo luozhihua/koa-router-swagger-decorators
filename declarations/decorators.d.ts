@@ -1,7 +1,7 @@
 import { Context } from "koa";
 import { SwaggerRouter } from "koa-swagger-decorator";
-import { AllowedMethods } from "./utils";
 import { Config, ResponseFormatter } from "./config";
+import { AllowedMethods } from "./utils";
 export declare const rootRouter: SwaggerRouter<any, {}>;
 export declare const RouterEvents: Pick<Config, "beforeController" | "afterController" | "formatter" | "validation">;
 export declare function createRouter(options: Config): SwaggerRouter<any, {}>;
