@@ -67,7 +67,7 @@ export const ajv = new Ajv({
 }); // options can be passed, e.g. {allErrors: true}\
 
 addFormats(ajv, { mode: "fast", keywords: true });
-addKeywords.default(ajv);
+addKeywords(ajv);
 
 ajv.addKeyword({
   keyword: "numberlike",
