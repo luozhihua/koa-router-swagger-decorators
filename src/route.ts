@@ -1,18 +1,13 @@
-import {
-  SwaggerRouter,
-  request as swaggerRequest,
-  prefix as swaggerPrefix,
-  middlewares,
-} from "koa-swagger-decorator";
+import { request as swaggerRequest } from "koa-swagger-decorator";
+import { config, ResponseFormatter } from "./config";
 import { RouterEvents } from "./decorators";
 import {
-  ResponseData,
   AllowedMethods,
   defaultFormatter,
-  namedFunction,
   HttpStatusError,
+  namedFunction,
+  ResponseData,
 } from "./utils";
-import { config, Config, ResponseFormatter } from "./config";
 import defaultValidation from "./validator";
 
 /**
@@ -29,7 +24,11 @@ export function formatter(formatter: ResponseFormatter | boolean): any {
     formatter = (ctx, res) => res || ctx.body;
   }
 
-  return function (target: any, name: string, descriptor: PropertyDescriptor) {
+  return function (
+    _target: any,
+    _name: string,
+    descriptor: PropertyDescriptor
+  ) {
     if (typeof formatter === "function") {
       descriptor.value.formatter = formatter;
     }
@@ -38,13 +37,22 @@ export function formatter(formatter: ResponseFormatter | boolean): any {
 }
 
 export function validate(validation: typeof RouterEvents.validation) {
-  return function (target: any, name: string, descriptor: PropertyDescriptor) {
+  return function (
+    _target: any,
+    _name: string,
+    descriptor: PropertyDescriptor
+  ) {
     descriptor.value.validation = validation;
     return descriptor;
   };
 }
 
-async function doValidate(ctx, target, descriptor, NAME) {
+async function doValidate(
+  ctx: any,
+  target: any,
+  descriptor: any,
+  NAME: string
+) {
   const validations: typeof RouterEvents.validation[] = [
     descriptor.value.validation,
     RouterEvents.validation || defaultValidation,

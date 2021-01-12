@@ -1,5 +1,5 @@
 import { Context } from "koa";
-import { config, Config, ResponseFormatter } from "./config";
+import { config, Config, ResponseFormatter } from "../config";
 
 export type AllowedMethods =
   | "get"

@@ -1,7 +1,7 @@
 import * as path from "path";
-import * as EventEmitter from "promise-events";
+import EventEmitter from "./utils/async-emitter";
 import { Context } from "koa";
-import * as merge from "merge";
+import merge from "lodash.merge";
 import {
   SwaggerRouter,
   request as swaggerRequest,
@@ -34,7 +34,7 @@ export function createRouter(options: Config) {
   RouterEvents.formatter = options.formatter;
   RouterEvents.validation = options.validation;
 
-  merge(config, options);
+  merge(true, config, options);
 
   const router: any = swagger(options);
 

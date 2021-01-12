@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "allowJs": false,
+    "allowJs": true,
     "lib": [
       "es2015",
       "es2016",
@@ -26,10 +26,14 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
   },
+  "types": [
+    "node"
+  ],
   "include": [
     "src/**/*.ts",
     "src/**/*.json",
-    "node_modules/ajv-keywords/src/index.ts"
+    "node_modules/ajv-keywords/src/index.ts",
+    "src/utils/async-emitter.js"
   ],
   "exclude": [
     "node_modules",

@@ -1,7 +1,6 @@
 import * as fs from "fs";
-import * as path from "path";
-import * as merge from "merge";
 import { SwaggerRouter } from "koa-swagger-decorator";
+import merge from "lodash.merge";
 import { Config } from "./config";
 
 type RouterWithConfig = SwaggerRouter & { config?: Config };
@@ -16,7 +15,7 @@ function readPkg(pkgFile: string) {
 }
 
 export default function (config: Config): RouterWithConfig {
-  let pkg;
+  let pkg: any;
   let swaggerConfig;
 
   if (config.packageFile) {
@@ -59,7 +58,7 @@ export default function (config: Config): RouterWithConfig {
     },
   };
 
-  swaggerConfig = merge.recursive(true, defaultConf, config.swaggerConfig, {
+  swaggerConfig = merge(true, defaultConf, config.swaggerConfig, {
     validatable: false,
   });
 

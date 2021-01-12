@@ -2,7 +2,6 @@ import { Context } from "koa";
 import Ajv, { JSONSchemaType } from "ajv";
 import addFormats from "ajv-formats";
 import * as addKeywords from "ajv-keywords";
-import { HttpStatusError } from "../utils";
 import { pick, update } from "lodash";
 
 // interface Schema {
@@ -127,6 +126,7 @@ async function validateByAJV(
               "data",
               "params",
               "dataPath",
+              "paramsType",
             ]);
             update(picked, "dataPath", (v: any) => v.replace(/\//g, "."));
             picked.paramsType = paramsType;
