@@ -1,7 +1,7 @@
 import { Context } from "koa";
 import Ajv, { JSONSchemaType } from "ajv";
 import addFormats from "ajv-formats";
-import * as addKeywords from "ajv-keywords";
+import addKeywords from "ajv-keywords";
 import { pick, update } from "lodash";
 
 // interface Schema {

@@ -25,7 +25,7 @@ export function createRouter(options: Config) {
   RouterEvents.formatter = options.formatter;
   RouterEvents.validation = options.validation;
 
-  merge(true, config, options);
+  merge(config, options);
 
   const router: any = swagger(options);
 

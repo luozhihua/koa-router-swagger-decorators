@@ -1,14 +1,16 @@
 import * as path from "path";
 import Koa from "koa";
 import KoaBody from "koa-body";
-import createRouter, { HttpResponse } from "../../src";
+import createRouter, { HttpResponse } from "../../../src/index";
+import { Server } from "http";
 
 const app = new Koa();
 const router = createRouter({
   controllersDir: path.resolve(__dirname, "./apis"),
   packageFile: path.resolve(__dirname, "./package.json"),
+  validatable: true,
   swaggerConfig: {
-    prefix: "/api",
+    prefix: "",
   },
   beforeController: async (_ctx) => {
     console.log("before hooks");
@@ -26,7 +28,7 @@ const router = createRouter({
         data: result,
         message: ctx.message || ctx.state.message || "",
         status: 200,
-        errorCode: ctx.state.errorCode || 0,
+        errors: null,
         success: true,
       });
     } else if (!result) {
@@ -34,7 +36,7 @@ const router = createRouter({
         data: ctx.body || null,
         message: ctx.message || ctx.state.message || "",
         status: 200,
-        errorCode: ctx.state.errorCode || 0,
+        errors: null,
         success: true,
       });
     } else {
@@ -57,7 +59,7 @@ app.use(async function errorHandler(ctx, next) {
       status,
       message: process.env.NODE_ENV !== "production" ? message : "",
       data: null,
-      code: err.code || ctx.state.errorCode,
+      errors: err.errors || null,
       success: false,
     };
 
@@ -68,6 +70,12 @@ app.use(async function errorHandler(ctx, next) {
 app.use(KoaBody());
 app.use(routes);
 app.use(methods);
-app.listen(6789);
 
-console.log("App listen on port : 6789");
+function start() {
+  const port = parseInt(process.env.PORT || "6789");
+  const server: Server = app.listen(port);
+  console.log(`App listen on port : ${port}`);
+  return server;
+}
+
+export { app, start };

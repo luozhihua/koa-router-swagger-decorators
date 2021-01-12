@@ -1,0 +1,11 @@
+{
+  "name": "koa-router-swager-decorators",
+  "version": "1.0.0",
+  "description": "A Typescript decorative library for Koa-router integrating swager.",
+  "main": "lib/index.ts",
+  "author": "Colin <mail@luozhihua.com>",
+  "license": "ISC",
+  "gitHooks": {
+    "pre-commit": "echo '123456'"
+  }
+}
