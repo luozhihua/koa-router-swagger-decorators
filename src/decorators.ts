@@ -1,23 +1,14 @@
-import * as path from "path";
-import EventEmitter from "./utils/async-emitter";
 import { Context } from "koa";
-import merge from "lodash.merge";
 import {
-  SwaggerRouter,
-  request as swaggerRequest,
   prefix as swaggerPrefix,
-  middlewares,
+  request as swaggerRequest,
+  SwaggerRouter,
 } from "koa-swagger-decorator";
-import swagger from "./swagger";
-
-import {
-  ResponseData,
-  AllowedMethods,
-  defaultFormatter,
-  namedFunction,
-} from "./utils";
-
+import merge from "lodash.merge";
 import { config, Config, ResponseFormatter } from "./config";
+import swagger from "./swagger";
+import { AllowedMethods, defaultFormatter, ResponseData } from "./utils";
+import EventEmitter from "./utils/async-emitter";
 
 export const rootRouter = new SwaggerRouter();
 export const RouterEvents: Pick<
