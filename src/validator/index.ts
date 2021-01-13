@@ -91,6 +91,8 @@ function schemaMapper(key: string, val: any) {
     val.type = "string";
     val.format = "binary";
   }
+
+  return val;
 }
 
 async function validateByAJV(
