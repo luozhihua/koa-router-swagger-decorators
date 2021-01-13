@@ -86,13 +86,20 @@ ajv.addKeyword({
   errors: true,
 });
 
+function schemaMapper(key: string, val: any) {
+  if (val && val.type === "file") {
+    val.type = "string";
+    val.format = "binary";
+  }
+}
+
 async function validateByAJV(
   name: string,
   paramsType: string,
   params: Params<Object>,
   schema: Schema<Object>
 ) {
-  const schemaCopy = JSON.parse(JSON.stringify(schema));
+  const schemaCopy = JSON.parse(JSON.stringify(schema, schemaMapper));
   const requiresParams: string[] = getRequiredParamsName(schemaCopy);
   const wrappedSchema = {
     $async: true,
