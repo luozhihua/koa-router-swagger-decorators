@@ -89,7 +89,7 @@ ajv.addKeyword({
 function schemaMapper(key: string, val: any) {
   if (val && val.type === "file") {
     val.type = "string";
-    val.format = "binary";
+    // val.format = "binary";
   }
 
   return val;
