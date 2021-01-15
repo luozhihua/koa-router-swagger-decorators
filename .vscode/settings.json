@@ -1,3 +1,39 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "mocha.files.glob": "**/?(test?(s)|*(_)test?(s)*(_))/**/*.?(spec|test).?(ts|js)",
+  "mocha.nycPath": ".nyrc.json",
+  "mocha.options": {
+    "recursive": true,
+    "parallel": false,
+    "require": "ts-node/register",
+    "file": "tests/setup.ts",
+    "ui": "bdd",
+    "timeout": 6000000,
+    "extensions": "ts",
+    "exit": true,
+    "diff": true,
+    "extension": [
+      "ts"
+    ],
+    "package": "./package.json",
+    "reporter": "spec",
+    "slow": 75,
+    "files": [
+      "tests/**/*.ts",
+      "src/**/*.ts"
+    ],
+    "watch-files": [
+      "tests/**/*.ts",
+      "src/**/*.ts"
+    ],
+    "watch-ignore": [
+      "node_modules",
+      "coverage",
+      ".git",
+      ".nyc_output"
+    ]
+  },
+  "mocha.requires": [
+    "ts-node/register"
+  ]
 }

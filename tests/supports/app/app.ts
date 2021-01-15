@@ -52,7 +52,7 @@ app.use(async function errorHandler(ctx, next) {
   try {
     await next();
   } catch (err) {
-    console.log(err.stack || err);
+    console.log(err.stack || err, err.errors);
     let status = err.status || 500;
     let message = err.message || "";
     let body = {
@@ -67,12 +67,32 @@ app.use(async function errorHandler(ctx, next) {
     ctx.body = body;
   }
 });
-app.use(KoaBody());
+app.use(
+  KoaBody({
+    // Body options
+    jsonLimit: "5mb",
+    formLimit: "5mb",
+    textLimit: "5mb",
+    multipart: true,
+    urlencoded: true,
+    parsedMethods: ["POST", "PUT", "PATCH", "GET", "HEAD", "DELETE"],
+
+    // Formidable options
+    formidable: {
+      maxFields: 1000, // default: 1000
+      maxFieldsSize: 2 * 1024 * 1024, // 除文件外的表单大小，default: 2mb (2 * 1024 * 1024)
+      // uploadDir: os.tmpdir(), // defualt is os.tmpDir()
+      keepExtensions: true,
+      multiples: true, // 支持多文件上传
+      hash: "sha1", // 检查上传文件的 hash
+    },
+  })
+);
 app.use(routes);
 app.use(methods);
 
-function start() {
-  const port = parseInt(process.env.PORT || "6789");
+function start(_port: number = 6789) {
+  const port = _port || parseInt(process.env.PORT || "6789");
   const server: Server = app.listen(port);
   console.log(`App listen on port : ${port}`);
   return server;

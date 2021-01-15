@@ -3,13 +3,31 @@
   "configurations": [
     {
       "type": "node",
+      "request": "launch",
+      "name": "Mocha Tests",
+      "program": "${workspaceRoot}/node_modules/.bin/mocha",
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors",
+        "-r",
+        "ts-node/register",
+        "${workspaceRoot}/tests/**/*.spec.ts"
+        // "${workspaceRoot}/tests/spec/validate-file.spec.ts"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "type": "node",
       "request": "attach",
       "name": "Attach",
       "port": 6788,
       "restart": true,
       "protocol": "inspector"
     },
-
     {
       "name": "Debug TSNode",
       "type": "node",
@@ -17,14 +35,17 @@
       "args": [
         "${workspaceRoot}/tests/e2e/index.ts" // 入口文件
       ],
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register"
+      ],
       "sourceMaps": true,
       "cwd": "${workspaceRoot}",
       "protocol": "inspector",
       // "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     },
-
     {
       "type": "node",
       "request": "launch",

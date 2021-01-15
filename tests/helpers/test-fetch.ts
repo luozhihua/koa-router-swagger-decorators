@@ -1,6 +1,14 @@
 import chalk from "chalk";
 import { Server } from "http";
-import { omit } from "lodash";
+import {
+  omit,
+  isObject,
+  isPlainObject,
+  isArray,
+  isBoolean,
+  isNumber,
+  merge,
+} from "lodash";
 import fetch, { Headers, RequestInit, Response } from "node-fetch";
 
 type ConfigTestContext =
@@ -20,6 +28,12 @@ export interface TestRequestOptions extends RequestInit {
   url: string;
   baseURL?: string;
   data?: any;
+  headers?: {
+    // 'content-type': string;
+    // 'Content-type': 'Should be lowercase';
+    // 'Content-Type': 'Should be lowercase';
+    [k: string]: string;
+  };
 }
 
 async function resolveContext(ctx: ConfigTestContext): Promise<TestContext> {
@@ -71,27 +85,38 @@ export async function request(config: TestRequestOptions): Promise<Response> {
   const ctx = config.context ? await resolveContext(config.context) : context;
   const baseURL = ctx ? ctx.host : config.baseURL;
   const url = `${baseURL}${config.url}`;
+
   const headers = {
-    ...(config.headers || {}),
-    "Content-Type": "application/json",
-    // "x-internal-user": creatorId,
+    ...omit(config.headers || {}, ["content-type", "Content-Type"]),
   };
+  const contentType = config.headers
+    ? config.headers["content-type"] || config.headers["Content-Type"]
+    : "";
+
+  let body = config.data || config.body;
+  if (isPlainObject(body) || isArray(body)) {
+    body = JSON.stringify(body);
+    headers["content-type"] = contentType || "application/json";
+  } else if (contentType) {
+    headers["content-type"] = contentType;
+  }
+
   const options: RequestInit = {
     ...omit(config, ["headers", "data", "body", "url", "baseURL"]),
-    headers: new Headers(headers),
-    body: JSON.stringify(config.data || config.body),
+    headers, //: new Headers(headers),
+    body,
   };
 
   const res = fetch(url, options).then(async (res) => {
-    if (res.status !== 200) {
-      console.warn(
-        chalk.yellow(res.status),
-        chalk.bold(chalk.cyan(config.method)),
-        chalk.bold(chalk.cyan(config.url)),
-        "\n" +
-          chalk.grey(outputWrapper(JSON.stringify(await res.json(), null, 4)))
-      );
-    }
+    // if (res.status !== 200) {
+    //   console.warn(
+    //     chalk.yellow(res.status),
+    //     chalk.bold(chalk.cyan(config.method)),
+    //     chalk.bold(chalk.cyan(config.url)),
+    //     "\n" +
+    //       chalk.grey(outputWrapper(JSON.stringify(await res.json(), null, 4)))
+    //   );
+    // }
     return res;
   });
 
@@ -105,3 +130,18 @@ export async function request(config: TestRequestOptions): Promise<Response> {
   });
   return res;
 }
+
+request.json = (
+  options: TestRequestOptions & {
+    headers: { "content-type": "application/json"; [K: string]: string };
+  }
+) => {
+  const defaultConf = {
+    headers: {
+      "content-type": "application/json",
+    },
+  };
+  const config = merge(true, {}, defaultConf, options);
+
+  request(config);
+};

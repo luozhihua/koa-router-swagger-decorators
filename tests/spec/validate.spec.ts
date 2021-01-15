@@ -40,6 +40,7 @@ describe("Test validate", () => {
       const response = await request({
         method: "POST",
         url: `/validate/post`,
+        // headers: { "content-type": "application/json" },
         data: {
           username: "Colin",
           password: "Colin98765",

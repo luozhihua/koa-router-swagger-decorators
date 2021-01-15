@@ -1,6 +1,7 @@
 import { Server } from "http";
 import { start } from "./supports/app/app";
 import chalk from "chalk";
+import { random } from "lodash";
 
 export interface Context {
   server: Server;
@@ -11,13 +12,16 @@ const log = console.log;
 let context: Context;
 const ready: Promise<Context> = new Promise(async (resolve, reject) => {
   try {
-    const server = start();
-    const addr: any = server.address();
-    // // const user = await Commons.createTestUser(server);
-    context = {
-      server,
-      host: `http://127.0.0.1:${addr.port}`,
-    };
+    if (!context) {
+      const port = random(2000, 8000, false);
+      const server = start(port);
+      const addr: any = server.address();
+      // // const user = await Commons.createTestUser(server);
+      context = {
+        server,
+        host: `http://127.0.0.1:${addr.port}`,
+      };
+    }
     resolve(context);
   } catch (err) {
     reject(err);
