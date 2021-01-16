@@ -70,11 +70,21 @@ function getRequiredParamsName<T>(schema: Schema<T>): string[] {
  */
 function getFileProperties(ctx: Context, key: string) {
   const { files } = ctx.request as any;
-  const file = files[key];
-  return {
-    fieldName: key,
-    ...pick(file, ["hash", "lastModifiedDate", "name", "path", "size", "type"]),
-  };
+  const file = files ? files[key] : undefined;
+  if (file) {
+    const allowProps = [
+      "hash",
+      "lastModifiedDate",
+      "name",
+      "path",
+      "size",
+      "type",
+    ];
+    return JSON.stringify({
+      fieldName: key,
+      ...pick(file, allowProps),
+    });
+  }
 }
 
 /**
@@ -94,7 +104,7 @@ function prepareParams<T>(
     // 如果是文件类型，从 request 中提取验证所需的字段和属性并转为 string, 供下一步的 ajv 验证器使用
     if (type === "file") {
       schema[key].type = "string";
-      params[key] = JSON.stringify(getFileProperties(ctx, key));
+      params[key] = getFileProperties(ctx, key);
     }
 
     // 将 string 类型的 "True", "False" 转为 boolean类型
