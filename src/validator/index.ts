@@ -163,7 +163,7 @@ export default async function KoaParamsValidator(
   target: any,
   name: string
 ): Promise<any> {
-  const schemas: Schema<Parameters> = cloneDeep(target[name].parameters);
+  const schemas: Schema<Parameters> = cloneDeep(target[name].parameters) || {};
   const parameters: Parameters = {
     header: ctx.headers,
     path: ctx.params,

@@ -16,7 +16,7 @@ function readFile(file: string): fs.ReadStream {
   return fs.createReadStream(filepath);
 }
 
-describe("Test validate", () => {
+describe("Validation/setup", () => {
   let request: (config: TestRequestOptions) => Promise<Response>;
   before(async () => {
     request = await createTestRequestClient(setup);
