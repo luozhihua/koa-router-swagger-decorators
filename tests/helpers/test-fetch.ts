@@ -91,7 +91,7 @@ export async function request(config: TestRequestOptions): Promise<Response> {
   };
   const contentType = config.headers
     ? config.headers["content-type"] || config.headers["Content-Type"]
-    : "";
+    : undefined;
 
   let body = config.data || config.body;
   if (isPlainObject(body) || isArray(body)) {
